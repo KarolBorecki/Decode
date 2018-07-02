@@ -1,0 +1,50 @@
+<SquareButton@Button>:
+    size_hint_x: .2
+    size_hint_y: None
+    height: self.width
+
+<MenuScreen>:
+    FloatLayout:
+        Button:
+            text: 'Play'
+            pos_hint: {'center_x': .5, 'center_y': .4}
+            size_hint: (.4, .1)
+
+            on_press: root.manager.current = 'play'
+
+        SquareButton:
+            pos_hint: {'x': 0, 'top': 1}
+
+            on_press: root.change_theme()
+
+
+        SquareButton:
+            pos_hint: {'right': 1, 'top': 1}
+
+            on_press: root.manager.current = 'settings'
+
+<PlayScreen>:
+    FloatLayout:
+        Label:
+            text: 'PLAY SCREEN'
+            pos_hint: {'center_x': .5, 'center_y': .5}
+
+        Button:
+            text: 'BACK'
+            pos_hint: {'center_x': .5, 'y': 0}
+            size_hint: (.3, .1)
+
+            on_press: root.manager.current = 'menu'
+
+<SettingsScreen>:
+    FloatLayout:
+        Label:
+            text: 'SETTINGS SCREEN'
+            pos_hint: {'center_x': .5, 'center_y': .5}
+
+        Button:
+            text: 'BACK'
+            pos_hint: {'center_x': .5, 'y': 0}
+            size_hint: (.3, .1)
+
+            on_press: root.manager.current = 'menu'
