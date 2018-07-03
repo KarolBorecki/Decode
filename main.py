@@ -50,8 +50,44 @@ class MenuScreen(Screen):
 
 
 class PlayScreen(Screen):
+    bombs_count = 4
+    colors = ["red", "blue", "green", "yellow"]
+
+    touch_accuracy = 20
+    last_x = 0
+    last_y = 0
+    actually_x = 0
+    actually_y = 0
+
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
+        for i in range(100):
+            self.board.add_widget(Block(random.choice(self.colors)))
+
+    def bomb_drag(self):
+        print("BOMB DRAGGED")
+
+    def on_touch_down(self, touch):
+        self.last_x = touch.pos[0]
+        self.last_y = touch.pos[1]
+        super(PlayScreen, self).on_touch_down(touch)
+
+    def on_touch_up(self, touch):
+        self.actually_x = touch.pos[0]
+        self.actually_y = touch.pos[1]
+        dif_x = self.actually_x - self.last_x
+        dif_y = self.actually_y - self.last_y
+
+        if dif_y > self.touch_accuracy:
+            print("Up")
+        elif dif_y < -self.touch_accuracy:
+            print("Down")
+        elif dif_x > self.touch_accuracy:
+            print("Right")
+        elif dif_x < -self.touch_accuracy:
+            print("LEFT")
+
+        super(PlayScreen, self).on_touch_up(touch)
 
 
 class SettingsScreen(Screen):
