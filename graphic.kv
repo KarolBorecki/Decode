@@ -1,25 +1,61 @@
-<SquareButton@Button>:
-    size_hint_x: .2
+<Widget>:
+    font_name: "fonts/font.ttf"
+
+
+<SquareButton>:
+    size_hint_x: .15
     size_hint_y: None
     height: self.width
 
+<BackButton@SquareButton>:
+    pos_hint: {'x': 0, 'top': 1}
+    source: "img/home.png"
+
+    on_press: root.parent.parent.manager.current = 'menu'
+
 <MenuScreen>:
     FloatLayout:
+        BoxLayout:
+            size_hint: (.5, .2)
+            orientation: 'vertical'
+            pos_hint: {'center_x': .5, 'top': .95}
+
+            Image:
+                source: "img/trophy.png"
+
+            Label:
+                text: str(root.high_score)
+
+                font_size: root.height/15
+                halign: 'center'
+
+        Label:
+            text: "[b]Decode![/b]"
+            pos_hint: {'center_x': .5, 'center_y': .6}
+
+            font_size: root.height/10
+            halign: 'center'
+            markup: True
+
         Button:
             text: 'Play'
-            pos_hint: {'center_x': .5, 'center_y': .4}
-            size_hint: (.4, .1)
+            size_hint: (.5, .15)
+            pos_hint: {'center_x': .5, 'center_y': .3}
+
+            background_color: .3, .5, 1, .9
+            font_size: root.height/15
 
             on_press: root.manager.current = 'play'
 
         SquareButton:
             pos_hint: {'x': 0, 'top': 1}
+            source: "img/theme.png"
 
             on_press: root.change_theme()
 
-
         SquareButton:
             pos_hint: {'right': 1, 'top': 1}
+            source: "img/settings.png"
 
             on_press: root.manager.current = 'settings'
 
@@ -29,12 +65,8 @@
             text: 'PLAY SCREEN'
             pos_hint: {'center_x': .5, 'center_y': .5}
 
-        Button:
-            text: 'BACK'
-            pos_hint: {'center_x': .5, 'y': 0}
-            size_hint: (.3, .1)
-
-            on_press: root.manager.current = 'menu'
+        BackButton:
+            id: back
 
 <SettingsScreen>:
     FloatLayout:
@@ -42,9 +74,5 @@
             text: 'SETTINGS SCREEN'
             pos_hint: {'center_x': .5, 'center_y': .5}
 
-        Button:
-            text: 'BACK'
-            pos_hint: {'center_x': .5, 'y': 0}
-            size_hint: (.3, .1)
-
-            on_press: root.manager.current = 'menu'
+        BackButton:
+            id: back

@@ -5,12 +5,14 @@ from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-Window.size = (270, 480)
+Window.size = (400, 700)
 Builder.load_file('graphic.kv')
 
 
 class MenuScreen(Screen):
-    light_color = (.9, .9, .9, 1)
+    high_score = 23453
+
+    light_color = (.8, .8, .8, 1)
     dark_color = (.1, .1, .1, 1)
 
     def __init__(self, color, **kwargs):
@@ -22,6 +24,7 @@ class MenuScreen(Screen):
     def change_theme(self):
         self.color = not self.color
         self.set_color(self.color)
+        print("CHANGING")
 
     def set_color(self, color):
         if color:
@@ -38,6 +41,11 @@ class PlayScreen(Screen):
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
         super(SettingsScreen, self).__init__(**kwargs)
+
+
+class SquareButton(ButtonBehavior, Image):
+    def __init__(self, **kwargs):
+        super(SquareButton, self).__init__(**kwargs)
 
 
 sm = ScreenManager()
