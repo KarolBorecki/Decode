@@ -1,9 +1,8 @@
 <Widget>:
     font_name: "fonts/font.ttf"
 
-
 <SquareButton>:
-    size_hint_x: .15
+    size_hint_x: .12
     size_hint_y: None
     height: self.width
 
@@ -11,7 +10,7 @@
     pos_hint: {'x': 0, 'top': 1}
     source: "img/home.png"
 
-    on_press: root.parent.parent.manager.current = 'menu'
+    on_release: root.parent.parent.manager.current = 'menu'
 
 <MenuScreen>:
     FloatLayout:
@@ -25,9 +24,7 @@
 
             Label:
                 text: str(root.high_score)
-
                 font_size: root.height/15
-                halign: 'center'
 
         Label:
             text: "[b]Decode![/b]"
@@ -45,34 +42,59 @@
             background_color: .3, .5, 1, .9
             font_size: root.height/15
 
-            on_press: root.manager.current = 'play'
+            on_release: root.manager.current = 'play'
 
         SquareButton:
             pos_hint: {'x': 0, 'top': 1}
             source: "img/theme.png"
 
-            on_press: root.change_theme()
+            on_release: root.change_theme()
 
         SquareButton:
             pos_hint: {'right': 1, 'top': 1}
             source: "img/settings.png"
 
-            on_press: root.manager.current = 'settings'
+            on_release: root.manager.current = 'settings'
 
 <PlayScreen>:
-    FloatLayout:
-        Label:
-            text: 'PLAY SCREEN'
-            pos_hint: {'center_x': .5, 'center_y': .5}
+    board: board
 
+    FloatLayout:
         BackButton:
             id: back
+
+        Label:
+            text: "2114"
+            pos_hint: {'center_x': .5, 'center_y': .95}
+            font_size: root.height/15
+
+        GridLayout:
+            id: board
+            size_hint_x: .9
+            size_hint_y: None
+            height: self.width
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            spacing: 5
+            cols: 10
+
+        SquareButton:
+            size_hint_x: .2
+            pos_hint: {'center_x': .5, 'top': .15}
+            source: "img/bomb.png"
+            on_press: root.bomb_drag()
+
+        Label:
+            text: str(root.bombs_count)
+            pos_hint: {'center_x': .55, 'center_y': .05}
+            font_size: self.height/20
 
 <SettingsScreen>:
     FloatLayout:
         Label:
-            text: 'SETTINGS SCREEN'
+            text: 'SETTINGS COMING SOON!!!\nOR NEVER...'
             pos_hint: {'center_x': .5, 'center_y': .5}
+            font_size: 20
+            halign: 'center'
 
         BackButton:
             id: back
