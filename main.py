@@ -11,11 +11,28 @@ Window.size = (400, 700)
 Builder.load_file('graphic.kv')
 
 
-class Block(Image):
-    def __init__(self, c, **kwargs):
+class Block(ButtonBehavior, Image):
+    def __init__(self, c, x, y, **kwargs):
         super(Block, self).__init__(**kwargs)
+        self.index_x = x
+        self.index_y = y
         self.c = c
         self.source = self.load_source()
+
+    def move(self, direction):
+        z = ""
+        if direction == "up" and self.index_y > 0:
+            z = "GOOD"
+        if direction == "down"and self.index_y < self.parent.parent.parent.board_size-1:
+            z = "GOOD"
+        if direction == "left"and self.index_x > 0:
+            z = "GOOD"
+        if direction == "right"and self.index_x < self.parent.parent.parent.board_size-1:
+            z = "GOOD"
+        print("Moving " + str(self.c) + " block to " + str(direction) + "  " + z)
+
+    def on_press(self):
+        self.parent.parent.parent.block_pressed(self)
 
     def load_source(self):
         return "img/blocks/" + str(self.c) + "_block.png"
@@ -50,26 +67,43 @@ class MenuScreen(Screen):
 
 
 class PlayScreen(Screen):
-    bombs_count = 4
     colors = ["red", "blue", "green", "yellow"]
-
+    blocks = []
     touch_accuracy = 20
+    board_size = 8
+
+    bombs_count = 4
+
     last_x = 0
     last_y = 0
     actually_x = 0
     actually_y = 0
+    last_touched_block = None
 
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
-        for i in range(100):
-            self.board.add_widget(Block(random.choice(self.colors)))
+        for y in range(self.board_size):
+            self.blocks.append([])
+            for x in range(self.board_size):
+                self.blocks[y].append(Block(random.choice(self.colors), x, y))
 
-    def bomb_drag(self):
+        for x in range(self.board_size):
+            for block in self.blocks[x]:
+                self.board.add_widget(block)
+
+        print(self.blocks)
+
+    @staticmethod
+    def bomb_drag():
         print("BOMB DRAGGED")
+
+    def block_pressed(self, block):
+        self.last_touched_block = block
 
     def on_touch_down(self, touch):
         self.last_x = touch.pos[0]
         self.last_y = touch.pos[1]
+
         super(PlayScreen, self).on_touch_down(touch)
 
     def on_touch_up(self, touch):
@@ -78,15 +112,19 @@ class PlayScreen(Screen):
         dif_x = self.actually_x - self.last_x
         dif_y = self.actually_y - self.last_y
 
+        direction = ""
         if dif_y > self.touch_accuracy:
-            print("Up")
+            direction = "up"
         elif dif_y < -self.touch_accuracy:
-            print("Down")
+            direction = "down"
         elif dif_x > self.touch_accuracy:
-            print("Right")
+            direction = "right"
         elif dif_x < -self.touch_accuracy:
-            print("LEFT")
+            direction = "left"
+        else:
+            return
 
+        self.last_touched_block.move(direction)
         super(PlayScreen, self).on_touch_up(touch)
 
 
