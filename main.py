@@ -19,20 +19,37 @@ class Block(ButtonBehavior, Image):
         self.c = c
         self.source = self.load_source()
 
-    def move(self, direction):
-        z = ""
-        if direction == "up" and self.index_y > 0:
-            z = "GOOD"
-        if direction == "down"and self.index_y < self.parent.parent.parent.board_size-1:
-            z = "GOOD"
-        if direction == "left"and self.index_x > 0:
-            z = "GOOD"
-        if direction == "right"and self.index_x < self.parent.parent.parent.board_size-1:
-            z = "GOOD"
-        print("Moving " + str(self.c) + " block to " + str(direction) + "  " + z)
-
     def on_press(self):
         self.parent.parent.parent.block_pressed(self)
+
+    def move(self, direction):
+        swap_block = self.get_block_by_direction(direction)
+        self.swap_colors(swap_block)
+
+    def get_block_by_direction(self, direction):
+        parent = self.parent.parent.parent
+        swap_block_y = self.index_y
+        swap_block_x = self.index_x
+
+        if direction == "up" and self.index_y > 0:
+            swap_block_y -= 1
+        elif direction == "down" and self.index_y < parent.board_size - 1:
+            swap_block_y += 1
+        elif direction == "left" and self.index_x > 0:
+            swap_block_x -= 1
+        elif direction == "right" and self.index_x < parent.board_size - 1:
+            swap_block_x += 1
+
+        return parent.blocks[swap_block_y][swap_block_x]
+
+    def swap_colors(self, swap_block):
+        swap_block_color = swap_block.c
+        swap_block.set_color(self.c)
+        self.set_color(swap_block_color)
+
+    def set_color(self, c):
+        self.c = c
+        self.source = self.load_source()
 
     def load_source(self):
         return "img/blocks/" + str(self.c) + "_block.png"
@@ -69,7 +86,7 @@ class MenuScreen(Screen):
 class PlayScreen(Screen):
     colors = ["red", "blue", "green", "yellow"]
     blocks = []
-    touch_accuracy = 20
+    touch_accuracy = 30
     board_size = 8
 
     bombs_count = 4
