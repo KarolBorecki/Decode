@@ -48,6 +48,13 @@
             pos_hint: {'x': 0, 'top': 1}
             source: "img/theme.png"
 
+        Button:
+            pos_hint: {'x': 0, 'top': 1}
+            size_hint_x: .12
+            size_hint_y: None
+            height: self.width
+            background_normal: "img/na.png"
+            background_down: "img/na.png"
             on_release: root.change_theme()
 
         SquareButton:

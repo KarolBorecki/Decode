@@ -91,8 +91,6 @@ class PlayScreen(Screen):
             for block in self.blocks[x]:
                 self.board.add_widget(block)
 
-        print(self.blocks)
-
     @staticmethod
     def bomb_drag():
         print("BOMB DRAGGED")
