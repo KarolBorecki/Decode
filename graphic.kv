@@ -63,6 +63,12 @@
 
             on_release: root.manager.current = 'settings'
 
+        SquareButton:
+            pos_hint: {'right': 1, 'y': 0}
+            source: "img/info.png"
+
+            on_release: root.manager.current = 'info'
+
 <PlayScreen>:
     board: board
     score_board: score_board
@@ -104,6 +110,17 @@
     FloatLayout:
         Label:
             text: 'SETTINGS COMING SOON!!!\nOR NEVER...'
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            font_size: 20
+            halign: 'center'
+
+        BackButton:
+            id: back
+
+<InfoScreen>:
+    FloatLayout:
+        Label:
+            text: 'INFO'
             pos_hint: {'center_x': .5, 'center_y': .5}
             font_size: 20
             halign: 'center'

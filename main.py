@@ -264,10 +264,16 @@ class SettingsScreen(Screen):
         super(SettingsScreen, self).__init__(**kwargs)
 
 
+class InfoScreen(Screen):
+    def __init__(self, **kwargs):
+        super(InfoScreen, self).__init__(**kwargs)
+
+
 sm = ScreenManager()
 sm.add_widget(MenuScreen(name='menu'))
 sm.add_widget(PlayScreen(name='play'))
 sm.add_widget(SettingsScreen(name='settings'))
+sm.add_widget(InfoScreen(name='info'))
 
 
 class Decode(App):
