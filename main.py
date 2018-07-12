@@ -23,11 +23,12 @@ class Block(ButtonBehavior, Image):
     def on_press(self):
         self.parent.parent.parent.block_pressed(self)
 
-    def look_for_line(self):
+    def look_for_line(self, destroy=True):
         blocks_to_destroy = self.check_horizontal() + self.check_vertical()
         if len(blocks_to_destroy) > 0:
-            for block in blocks_to_destroy:
-                block.destroy()
+            if destroy:
+                for block in blocks_to_destroy:
+                    block.destroy()
             return True
         return False
 
@@ -110,7 +111,6 @@ class Block(ButtonBehavior, Image):
         self.check_is_destroyed()
 
     def destroy(self):
-        print("DESTOYING: " + self.c)
         Clock.schedule_once(self.set_to_destroyed, 0.5)
 
     def set_to_destroyed(self, dt):
@@ -132,8 +132,6 @@ class Block(ButtonBehavior, Image):
             self_looking = self.look_for_line()
             if not swap_block_looking and not self_looking:
                 self.swap_colors(swap_block, False)
-        print("===============================")
-        print("SWAPED: " + self.c + " AND " + swap_block.c)
 
     def check_is_destroyed(self):
         if self.c == "white":
@@ -144,8 +142,6 @@ class Block(ButtonBehavior, Image):
         self.set_color(random.choice(parent.colors))
 
     def set_color(self, c):
-        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        print("CHANGED COLOR OF BLOCK: " + self.c + " TO " + c)
         self.c = c
         self.load_source()
 
@@ -201,7 +197,7 @@ class MenuScreen(Screen):
 
 
 class PlayScreen(Screen):
-    colors = ["red", "blue", "green", "yellow"]
+    colors = ["red", "blue", "green", "yellow", "purple"]
     blocks = []
     touch_accuracy = 30
     board_size = 8
@@ -217,10 +213,12 @@ class PlayScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
+
         for y in range(self.board_size):
             self.blocks.append([])
             for x in range(self.board_size):
-                self.blocks[y].append(Block(random.choice(self.colors), x, y))
+                color = random.choice(self.colors)
+                self.blocks[y].append(Block(color, x, y))
 
         for x in range(self.board_size):
             for block in self.blocks[x]:
