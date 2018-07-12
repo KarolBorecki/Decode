@@ -64,7 +64,7 @@
             on_release: root.manager.current = 'settings'
 
         SquareButton:
-            pos_hint: {'right': 1, 'y': 0}
+            pos_hint: {'x': 0, 'y': 0}
             source: "img/info.png"
 
             on_release: root.manager.current = 'info'
@@ -119,11 +119,30 @@
 
 <InfoScreen>:
     FloatLayout:
-        Label:
-            text: 'INFO'
+        Image:
+            size_hint: 1, 1
             pos_hint: {'center_x': .5, 'center_y': .5}
+            source: "img/info_how_to_play.png"
+
+        Image:
+            size_hint_y: .07
+            pos_hint: {'center_x': .25, 'center_y': .2}
+            source: "img/facebook.png"
+
+        Image:
+            size_hint_y: .07
+            pos_hint: {'center_x': .25, 'center_y': .1}
+            source: "img/github.png"
+
+        Label:
+            pos_hint: {'center_x': .65, 'center_y': .2}
+            text: "/Karol.Borecki.op"
             font_size: 20
-            halign: 'center'
+
+        Label:
+            pos_hint: {'center_x': .65, 'center_y': .1}
+            text: "/KarolBorecki"
+            font_size: 20
 
         BackButton:
             id: back

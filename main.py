@@ -24,7 +24,10 @@ class Block(ButtonBehavior, Image):
         self.parent.parent.parent.block_pressed(self)
 
     def look_for_line(self):
-        if self.check_vertical() or self.check_horizontal():
+        blocks_to_destroy = self.check_horizontal() + self.check_vertical()
+        if len(blocks_to_destroy) > 0:
+            for block in blocks_to_destroy:
+                block.destroy()
             return True
         return False
 
@@ -33,78 +36,81 @@ class Block(ButtonBehavior, Image):
         y = self.index_y
         x = self.index_x
 
+        blocks_to_destroy = []
+        is_done = False
         if not y >= parent.board_size - 1 and not y <= 0:
             if self.c == parent.blocks[y - 1][x].c and self.c == parent.blocks[y + 1][x].c:
                 if y > 1:
                     if self.c == parent.blocks[y - 2][x].c:
-                        parent.blocks[y - 2][x].destroy()
+                        blocks_to_destroy.append(parent.blocks[y - 2][x])
                         parent.add_bomb()
+                blocks_to_destroy.append(parent.blocks[y - 1][x])
+                blocks_to_destroy.append(self)
+                blocks_to_destroy.append(parent.blocks[y + 1][x])
                 if not y >= parent.board_size - 2:
                     if self.c == parent.blocks[y + 2][x].c:
-                        parent.blocks[y + 2][x].destroy()
+                        blocks_to_destroy.append(parent.blocks[y + 2][x])
                         parent.add_bomb()
-                parent.blocks[y - 1][x].destroy()
-                parent.blocks[y + 1][x].destroy()
-                self.destroy()
-                return True
-        if y > 1:
+                is_done = True
+        if y > 1 and not is_done:
             if self.c == parent.blocks[y - 1][x].c and self.c == parent.blocks[y - 2][x].c:
-                parent.blocks[y - 2][x].destroy()
-                parent.blocks[y - 1][x].destroy()
-                self.destroy()
-                return True
-
-        if not y >= parent.board_size - 2:
+                blocks_to_destroy.append(parent.blocks[y - 2][x])
+                blocks_to_destroy.append(parent.blocks[y - 1][x])
+                blocks_to_destroy.append(self)
+                is_done = True
+        if not y >= parent.board_size - 2 and not is_done:
                 if self.c == parent.blocks[y + 1][x].c and self.c == parent.blocks[y + 2][x].c:
-                    parent.blocks[y + 1][x].destroy()
-                    parent.blocks[y + 2][x].destroy()
-                    self.destroy()
-                    return True
-        return False
+                    blocks_to_destroy.append(self)
+                    blocks_to_destroy.append(parent.blocks[y + 1][x])
+                    blocks_to_destroy.append(parent.blocks[y + 2][x])
+        return blocks_to_destroy
 
     def check_horizontal(self):
         parent = self.parent.parent.parent
         y = self.index_y
         x = self.index_x
 
+        blocks_to_destroy = []
+        is_done = False
         if not x >= parent.board_size - 1 and not x <= 0:
             if self.c == parent.blocks[y][x - 1].c and self.c == parent.blocks[y][x + 1].c:
                 if x > 1:
                     if self.c == parent.blocks[y][x - 2].c:
-                        parent.blocks[y][x - 2].destroy()
+                        blocks_to_destroy.append(parent.blocks[y][x - 2])
                         parent.add_bomb()
                 if not x >= parent.board_size - 2:
                     if self.c == parent.blocks[y][x + 2].c:
-                        parent.blocks[y][x + 2].destroy()
+                        blocks_to_destroy.append(parent.blocks[y][x + 2])
                         parent.add_bomb()
-                parent.blocks[y][x - 1].destroy()
-                self.destroy()
-                parent.blocks[y][x + 1].destroy()
-                return True
-        if not x <= 0:
+
+                blocks_to_destroy.append(parent.blocks[y][x - 1])
+                blocks_to_destroy.append(self)
+                blocks_to_destroy.append(parent.blocks[y][x + 1])
+                is_done = True
+        if not x <= 0 and not is_done:
             if self.c == parent.blocks[y][x - 1].c and self.c == parent.blocks[y][x - 2].c:
-                self.destroy()
-                parent.blocks[y][x - 1].destroy()
-                parent.blocks[y][x - 2].destroy()
-                return True
-        if not x >= parent.board_size - 2:
+                blocks_to_destroy.append(parent.blocks[y][x - 2])
+                blocks_to_destroy.append(parent.blocks[y][x - 1])
+                blocks_to_destroy.append(self)
+                is_done = True
+        if not x >= parent.board_size - 2 and not is_done:
             if self.c == parent.blocks[y][x + 1].c and self.c == parent.blocks[y][x + 2].c:
-                parent.blocks[y][x + 1].destroy()
-                parent.blocks[y][x + 2].destroy()
-                self.destroy()
-                return True
-        return False
+                blocks_to_destroy.append(parent.blocks[y][x + 1])
+                blocks_to_destroy.append(parent.blocks[y][x + 2])
+                blocks_to_destroy.append(self)
+        return blocks_to_destroy
 
     def fall(self, dt):
         parent = self.parent.parent.parent
-        block_above = parent.blocks[self.index_y - 1][self.index_x]
         if self.index_y > 0:
-            self.swap_colors(block_above, False)
-            Clock.schedule_once(block_above.fall, 0.0)
-        else:
-            self.check_is_destroyed()
+            if self.c == "white":
+                block_above = parent.blocks[self.index_y - 1][self.index_x]
+                self.swap_colors(block_above, False)
+                Clock.schedule_once(block_above.fall, 0.0)
+        self.check_is_destroyed()
 
     def destroy(self):
+        print("DESTOYING: " + self.c)
         Clock.schedule_once(self.set_to_destroyed, 0.5)
 
     def set_to_destroyed(self, dt):
@@ -122,9 +128,12 @@ class Block(ButtonBehavior, Image):
         swap_block.set_color(self.c)
         self.set_color(swap_block_color)
         if look:
-            if not swap_block.look_for_line() and not self.look_for_line():
+            swap_block_looking = swap_block.look_for_line()
+            self_looking = self.look_for_line()
+            if not swap_block_looking and not self_looking:
                 self.swap_colors(swap_block, False)
-        self.check_is_destroyed()
+        print("===============================")
+        print("SWAPED: " + self.c + " AND " + swap_block.c)
 
     def check_is_destroyed(self):
         if self.c == "white":
@@ -135,6 +144,8 @@ class Block(ButtonBehavior, Image):
         self.set_color(random.choice(parent.colors))
 
     def set_color(self, c):
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        print("CHANGED COLOR OF BLOCK: " + self.c + " TO " + c)
         self.c = c
         self.load_source()
 
