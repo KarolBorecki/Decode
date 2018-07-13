@@ -23,11 +23,13 @@ class Block(ButtonBehavior, Image):
     def on_press(self):
         self.parent.parent.parent.block_pressed(self)
 
-    def look_for_line(self, destroy=True):
+    def look_for_line(self, destroy=True, look_for_black=True):
         blocks_to_destroy = self.check_horizontal() + self.check_vertical()
         if len(blocks_to_destroy) > 0:
             if destroy:
                 for block in blocks_to_destroy:
+                    if look_for_black:
+                        block.look_for_black()
                     block.destroy()
             return True
         return False
@@ -101,6 +103,21 @@ class Block(ButtonBehavior, Image):
                 blocks_to_destroy.append(self)
         return blocks_to_destroy
 
+    def look_for_black(self):
+        parent = self.parent.parent.parent
+        if not self.index_y >= parent.board_size - 1:
+            if parent.blocks[self.index_y + 1][self.index_x].c == "black":
+                parent.game_over()
+        if not self.index_y <= 0:
+            if parent.blocks[self.index_y - 1][self.index_x].c == "black":
+                parent.game_over()
+        if not self.index_x >= parent.board_size - 1:
+            if parent.blocks[self.index_y][self.index_x + 1].c == "black":
+                parent.game_over()
+        if not self.index_x <= 0:
+            if parent.blocks[self.index_y][self.index_x - 1].c == "black":
+                parent.game_over()
+
     def fall(self, dt):
         parent = self.parent.parent.parent
         if self.index_y > 0:
@@ -109,7 +126,7 @@ class Block(ButtonBehavior, Image):
                 self.swap_colors(block_above, False)
                 Clock.schedule_once(block_above.fall, 0.0)
         self.check_is_destroyed()
-        self.look_for_line()
+        self.look_for_line(look_for_black=False)
 
     def destroy(self):
         Clock.schedule_once(self.set_to_destroyed, 2)
@@ -262,6 +279,11 @@ class PlayScreen(Screen):
 
     def block_pressed(self, block):
         self.last_touched_block = block
+
+    def game_over(self):
+        print("GAME OVER")
+        self.add_widget(Image(source="img/shadow.png", pos_hint={'center_x': .5, 'center_y': .5}))
+        self.add_widget(Image(source="img/game_over.png", pos_hint={'center_x': .5, 'center_y': .5}))
 
     def on_touch_down(self, touch):
         self.last_x = touch.pos[0]
