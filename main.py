@@ -135,11 +135,25 @@ class Block(ButtonBehavior, Image):
 
     def check_is_destroyed(self):
         if self.c == "white":
-            Clock.schedule_once(self.randomize_color, 0.5)
+            self.randomize_color()
 
-    def randomize_color(self, dt):
+    def check_color(self):
         parent = self.parent.parent.parent
-        self.set_color(random.choice(parent.colors))
+        x1 = parent.blocks[self.index_y][self.index_x - 1].c
+        x2 = parent.blocks[self.index_y][self.index_x - 2].c
+        y1 = parent.blocks[self.index_y - 1][self.index_x].c
+        y2 = parent.blocks[self.index_y - 2][self.index_x].c
+
+        if self.c == x1 and self.c == x2:
+            self.randomize_color()
+        if self.c == y1 and self.c == y2:
+            self.randomize_color()
+
+    def randomize_color(self):
+        parent = self.parent.parent.parent
+        available_colors = [x for x in parent.colors if x != self.c]
+        c = random.choice(available_colors)
+        self.set_color(c)
 
     def set_color(self, c):
         self.c = c
@@ -217,12 +231,15 @@ class PlayScreen(Screen):
         for y in range(self.board_size):
             self.blocks.append([])
             for x in range(self.board_size):
-                color = random.choice(self.colors)
-                self.blocks[y].append(Block(color, x, y))
+                self.blocks[y].append(Block(random.choice(self.colors), x, y))
 
         for x in range(self.board_size):
             for block in self.blocks[x]:
                 self.board.add_widget(block)
+
+        for y in self.blocks:
+            for x in y:
+                x.check_color()
 
     @staticmethod
     def bomb_drag():
