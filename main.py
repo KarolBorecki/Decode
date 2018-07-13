@@ -60,10 +60,10 @@ class Block(ButtonBehavior, Image):
                 blocks_to_destroy.append(self)
                 is_done = True
         if not y >= parent.board_size - 2 and not is_done:
-                if self.c == parent.blocks[y + 1][x].c and self.c == parent.blocks[y + 2][x].c:
-                    blocks_to_destroy.append(self)
-                    blocks_to_destroy.append(parent.blocks[y + 1][x])
-                    blocks_to_destroy.append(parent.blocks[y + 2][x])
+            if self.c == parent.blocks[y + 1][x].c and self.c == parent.blocks[y + 2][x].c:
+                blocks_to_destroy.append(self)
+                blocks_to_destroy.append(parent.blocks[y + 1][x])
+                blocks_to_destroy.append(parent.blocks[y + 2][x])
         return blocks_to_destroy
 
     def check_horizontal(self):
@@ -109,9 +109,10 @@ class Block(ButtonBehavior, Image):
                 self.swap_colors(block_above, False)
                 Clock.schedule_once(block_above.fall, 0.0)
         self.check_is_destroyed()
+        self.look_for_line()
 
     def destroy(self):
-        Clock.schedule_once(self.set_to_destroyed, 0.5)
+        Clock.schedule_once(self.set_to_destroyed, 2)
 
     def set_to_destroyed(self, dt):
         self.set_color("white")
@@ -151,9 +152,14 @@ class Block(ButtonBehavior, Image):
 
     def randomize_color(self):
         parent = self.parent.parent.parent
-        available_colors = [x for x in parent.colors if x != self.c]
-        c = random.choice(available_colors)
-        self.set_color(c)
+        if parent.actual_chance_for_black < 30:
+            available_colors = [x for x in parent.colors if x != self.c]
+            c = random.choice(available_colors)
+            self.set_color(c)
+        else:
+            self.set_color("black")
+            parent.actual_chance_for_black = 0
+        parent.actual_chance_for_black += 1
 
     def set_color(self, c):
         self.c = c
@@ -224,6 +230,7 @@ class PlayScreen(Screen):
     actually_x = 0
     actually_y = 0
     last_touched_block = None
+    actual_chance_for_black = 0
 
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
