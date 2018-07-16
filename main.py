@@ -31,7 +31,22 @@ class Block(ButtonBehavior, Image):
         parent.block_pressed(self)
         if self.parent.parent.parent.is_bomb_drag:
             parent.add_bomb(-1)
+            self.blow()
             parent.bomb_unactive()
+
+    def blow(self):
+        parent = self.parent.parent.parent
+        y = self.index_y
+        x = self.index_x
+        parent.blocks[y + 1][x].destroy()
+        parent.blocks[y - 1][x].destroy()
+        parent.blocks[y][x + 1].destroy()
+        parent.blocks[y][x - 1].destroy()
+        parent.blocks[y + 1][x - 1].destroy()
+        parent.blocks[y - 1][x - 1].destroy()
+        parent.blocks[y + 1][x + 1].destroy()
+        parent.blocks[y - 1][x + 1].destroy()
+        self.destroy()
 
     def look_for_line(self, destroy=True, look_for_black=True):
         blocks_to_destroy = self.check_horizontal() + self.check_vertical()
@@ -249,7 +264,7 @@ class PlayScreen(Screen):
     blocks = []
     touch_accuracy = 30
     board_size = 8
-    color_count = 4
+    color_count = 6
 
     score = 0
     bombs_count = 0
@@ -378,7 +393,7 @@ class SettingsScreen(Screen):
     colors_count_options = [4, 5, 6, 7, 8]
 
     board_size = 8
-    color_count = 7
+    color_count = 6
 
     board_size_btn = None
     color_count_btn = None
