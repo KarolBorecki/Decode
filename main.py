@@ -3,9 +3,15 @@ import random
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
+from kivy.graphics.context_instructions import Color
+from kivy.graphics.instructions import InstructionGroup
+from kivy.graphics.vertex_instructions import Rectangle
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.uix.button import Button
+from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 Window.size = (400, 700)
@@ -21,7 +27,11 @@ class Block(ButtonBehavior, Image):
         self.load_source()
 
     def on_press(self):
-        self.parent.parent.parent.block_pressed(self)
+        parent = self.parent.parent.parent
+        parent.block_pressed(self)
+        if self.parent.parent.parent.is_bomb_drag:
+            parent.add_bomb(-1)
+            parent.bomb_unactive()
 
     def look_for_line(self, destroy=True, look_for_black=True):
         blocks_to_destroy = self.check_horizontal() + self.check_vertical()
@@ -129,7 +139,7 @@ class Block(ButtonBehavior, Image):
         self.look_for_line(look_for_black=False)
 
     def destroy(self):
-        Clock.schedule_once(self.set_to_destroyed, 2)
+        Clock.schedule_once(self.set_to_destroyed, 0.2)
 
     def set_to_destroyed(self, dt):
         self.set_color("white")
@@ -234,10 +244,12 @@ class MenuScreen(Screen):
 
 
 class PlayScreen(Screen):
-    colors = ["red", "blue", "green", "yellow", "purple"]
+    all_colors = ["red", "blue", "green", "yellow", "orange", "purple", "pink"]
+    colors = []
     blocks = []
     touch_accuracy = 30
     board_size = 8
+    color_count = 4
 
     score = 0
     bombs_count = 0
@@ -248,10 +260,48 @@ class PlayScreen(Screen):
     actually_y = 0
     last_touched_block = None
     actual_chance_for_black = 0
+    game_active = True
+    is_bomb_drag = False
 
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
+        self.lose_info = FloatLayout(pos_hint={'center_x': .5, 'center_y': .5}, size_hint=(1, 1))
+        self.lose_info.add_widget(Image(source="img/game_over.png", pos_hint={'center_x': .5, 'center_y': .5}))
+        self.lose_info.add_widget(Label(text="Tap to try again", font_size=20, pos_hint={'center_x': .5, 'center_y': .2}))
+        self.canvas.add(Color(0, 0, 0, 0.3))
+        self.shadow = Rectangle(size=(Window.width, Window.height))
+        self.start_game()
 
+    def bomb_drag(self):
+        if not self.is_bomb_drag and self.bombs_count > 0:
+            self.bomb_active()
+        else:
+            self.bomb_unactive()
+
+    def bomb_active(self):
+        self.is_bomb_drag = True
+        self.bomb.size_hint_x = .25
+
+    def bomb_unactive(self):
+        self.is_bomb_drag = False
+        self.bomb.size_hint_x = .22
+
+    def add_score(self, amount):
+        self.score += amount
+        self.score_board.text = str(self.score)
+
+    def add_bomb(self, amount=1):
+        self.bombs_count += amount
+        self.bomb_label.text = str(self.bombs_count)
+
+    def block_pressed(self, block):
+        self.last_touched_block = block
+
+    def start_game(self):
+        self.colors = self.all_colors[0:self.color_count]
+        self.blocks = []
+        self.board.clear_widgets()
+        self.board.cols = self.board_size
         for y in range(self.board_size):
             self.blocks.append([])
             for x in range(self.board_size):
@@ -265,34 +315,33 @@ class PlayScreen(Screen):
             for x in y:
                 x.check_color()
 
-    @staticmethod
-    def bomb_drag():
-        print("BOMB DRAGGED")
-
-    def add_score(self, amount):
-        self.score += amount
-        self.score_board.text = str(self.score)
-
-    def add_bomb(self):
-        self.bombs_count += 1
-        self.bomb_label.text = str(self.bombs_count)
-
-    def block_pressed(self, block):
-        self.last_touched_block = block
-
     def game_over(self):
-        print("GAME OVER")
-        self.add_widget(Image(source="img/shadow.png", pos_hint={'center_x': .5, 'center_y': .5}))
-        self.add_widget(Image(source="img/game_over.png", pos_hint={'center_x': .5, 'center_y': .5}))
+        self.game_active = False
+        self.canvas.add(self.shadow)
+        self.add_widget(self.lose_info)
+
+    def try_again(self):
+        self.remove_widget(self.lose_info)
+        self.canvas.remove(self.shadow)
+        self.score = 0
+        self.score_board.text = str(self.score)
+        self.bombs_count = 0
+        self.bomb_label.text = str(self.bombs_count)
+        self.bomb_unactive()
+        self.game_active = True
+        self.start_game()
 
     def on_touch_down(self, touch):
-        self.last_x = touch.pos[0]
-        self.last_y = touch.pos[1]
+        if self.game_active:
+            self.last_x = touch.pos[0]
+            self.last_y = touch.pos[1]
+        else:
+            self.try_again()
 
         super(PlayScreen, self).on_touch_down(touch)
 
     def on_touch_up(self, touch):
-        if self.last_touched_block is not None:
+        if self.last_touched_block is not None and self.game_active:
             self.actually_x = touch.pos[0]
             self.actually_y = touch.pos[1]
             dif_x = self.actually_x - self.last_x
@@ -314,9 +363,70 @@ class PlayScreen(Screen):
         super(PlayScreen, self).on_touch_up(touch)
 
 
+class OptionButton(Button):
+    def __init__(self, option, **kwargs):
+        super(OptionButton, self).__init__(**kwargs)
+        self.option = option
+
+        self.text = str(option)
+        self.font_size = 17
+        self.background_color = (.3, .5, 1, .8)
+
+
 class SettingsScreen(Screen):
+    board_size_options = [4, 6, 8, 10, 15]
+    colors_count_options = [4, 5, 6, 7, 8]
+
+    board_size = 8
+    color_count = 7
+
+    board_size_btn = None
+    color_count_btn = None
+
     def __init__(self, **kwargs):
         super(SettingsScreen, self).__init__(**kwargs)
+        for size in self.board_size_options:
+            btn = OptionButton(size)
+            btn.bind(on_press=self.change_board)
+            if size == self.board_size:
+                btn.disabled = True
+                self.board_size_btn = btn
+            self.board_size_grid.add_widget(btn)
+
+        for size in self.colors_count_options:
+            btn = OptionButton(size)
+            btn.bind(on_press=self.change_color)
+            if size == self.color_count:
+                btn.disabled = True
+                self.color_count_btn = btn
+            self.colors_count_grid.add_widget(btn)
+
+    def save(self):
+        print("SAVING")
+
+    def change_board(self, instance):
+        play_screen = self.manager.get_screen('play')
+        if self.board_size != instance.option:
+            self.board_size_btn.disabled = False
+            self.board_size = instance.option
+
+            instance.disabled = True
+            self.board_size_btn = instance
+
+            play_screen.board_size = self.board_size
+            play_screen.try_again()
+
+    def change_color(self, instance):
+        play_screen = self.manager.get_screen('play')
+        if self.color_count != instance.option:
+            self.color_count_btn.disabled = False
+            self.color_count = instance.option
+
+            instance.disabled = True
+            self.color_count_btn = instance
+
+            play_screen.color_count = self.color_count
+            play_screen.try_again()
 
 
 class InfoScreen(Screen):

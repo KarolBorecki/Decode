@@ -73,6 +73,7 @@
     board: board
     score_board: score_board
     bomb_label: bomb_label
+    bomb: bomb
 
     FloatLayout:
         BackButton:
@@ -87,15 +88,15 @@
         GridLayout:
             id: board
             pos_hint: {'center_x': .5, 'center_y': .55}
-            size_hint_x: .85
+            size_hint_x: .9
             size_hint_y: None
             height: self.width
-            spacing: 5
+            spacing: 2
             cols: root.board_size
 
         SquareButton:
-            size_hint_x: None
-            size_hint_y: .15
+            id: bomb
+            size_hint_x: .22
             pos_hint: {'center_x': .5, 'top': .15}
             source: "img/bomb.png"
             on_press: root.bomb_drag()
@@ -107,7 +108,50 @@
             font_size: self.height/20
 
 <SettingsScreen>:
+    board_size_grid: board_size_grid
+    colors_count_grid: colors_count_grid
     FloatLayout:
+        Label:
+            pos_hint: {'center_x': .5, 'center_y': .9}
+            text: "Board size:"
+            font_size: 20
+
+        GridLayout:
+            id: board_size_grid
+            pos_hint: {'center_x': .5, 'center_y': .77}
+            size_hint_x: .85
+            size_hint_y: None
+            spacing: 5
+            row_default_height: self.width/len(root.board_size_options)
+            row_force_default: True
+            cols: len(root.board_size_options)
+
+        Label:
+            pos_hint: {'center_x': .5, 'center_y': .7}
+            text: "Colors:"
+            font_size: 20
+
+        GridLayout:
+            id: colors_count_grid
+            pos_hint: {'center_x': .5, 'center_y': .57}
+            size_hint_x: .85
+            size_hint_y: None
+            spacing: 5
+            row_default_height: self.width/len(root.colors_count_options)
+            row_force_default: True
+            cols: len(root.colors_count_options)
+
+        Label:
+            pos_hint: {'center_x': .5, 'center_y': .5}
+            text: "Change of game settings may cause lags \n score will not be saved!"
+            halign: 'center'
+            font_size: 15
+
+        Label:
+            pos_hint: {'center_x': .5, 'center_y': .35}
+            text: "Find me on media!"
+            font_size: 40
+
         Image:
             size_hint_y: .07
             pos_hint: {'center_x': .25, 'center_y': .2}
