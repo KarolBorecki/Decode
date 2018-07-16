@@ -1,5 +1,5 @@
 <Widget>:
-    font_name: "fonts/font.ttf"
+    font_name: "fonts/font4.ttf"
 
 <SquareButton>:
     size_hint_x: .12
@@ -17,7 +17,7 @@
         BoxLayout:
             size_hint: (.5, .2)
             orientation: 'vertical'
-            pos_hint: {'center_x': .5, 'top': .95}
+            pos_hint: {'center_x': .5, 'top': .65}
 
             Image:
                 source: "img/trophy.png"
@@ -28,8 +28,9 @@
 
         Label:
             text: "[b]Decode![/b]"
-            pos_hint: {'center_x': .5, 'center_y': .6}
+            pos_hint: {'center_x': .5, 'center_y': .85}
 
+            font_name: "fonts/title_font.ttf"
             font_size: root.height/10
             halign: 'center'
             markup: True
@@ -111,35 +112,44 @@
     board_size_grid: board_size_grid
     colors_count_grid: colors_count_grid
     FloatLayout:
-        Label:
-            pos_hint: {'center_x': .5, 'center_y': .9}
-            text: "Board size:"
-            font_size: 20
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: .25
+            pos_hint: {'center_x': .5, 'center_y': .85}
 
-        GridLayout:
-            id: board_size_grid
-            pos_hint: {'center_x': .5, 'center_y': .77}
-            size_hint_x: .85
-            size_hint_y: None
-            spacing: 5
-            row_default_height: self.width/len(root.board_size_options)
-            row_force_default: True
-            cols: len(root.board_size_options)
+            Label:
 
-        Label:
-            pos_hint: {'center_x': .5, 'center_y': .7}
-            text: "Colors:"
-            font_size: 20
+                text: "Board size:"
+                font_size: 20
 
-        GridLayout:
-            id: colors_count_grid
-            pos_hint: {'center_x': .5, 'center_y': .57}
-            size_hint_x: .85
-            size_hint_y: None
-            spacing: 5
-            row_default_height: self.width/len(root.colors_count_options)
-            row_force_default: True
-            cols: len(root.colors_count_options)
+            GridLayout:
+                id: board_size_grid
+                pos_hint: {'center_x': .5}
+                size_hint_x: .85
+                size_hint_y: None
+                spacing: 5
+                row_default_height: self.width/len(root.board_size_options)
+                row_force_default: True
+                cols: len(root.board_size_options)
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: .25
+            pos_hint: {'center_x': .5, 'center_y': .65}
+
+            Label:
+                pos_hint: {'center_x': .5, 'center_y': .7}
+                text: "Colors:"
+                font_size: 20
+
+            GridLayout:
+                id: colors_count_grid
+                pos_hint: {'center_x': .5, 'center_y': .57}
+                size_hint_x: .85
+                size_hint_y: None
+                spacing: 5
+                row_default_height: self.width/len(root.colors_count_options)
+                row_force_default: True
+                cols: len(root.colors_count_options)
 
         Label:
             pos_hint: {'center_x': .5, 'center_y': .5}
