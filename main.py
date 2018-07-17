@@ -236,7 +236,7 @@ class SquareButton(ButtonBehavior, Image):
 
 
 class MenuScreen(Screen):
-    high_score = 23453
+    high_score = 0
 
     light_color = (.8, .8, .8, 1)
     dark_color = (.1, .1, .1, 1)
@@ -257,9 +257,13 @@ class MenuScreen(Screen):
         else:
             Window.clearcolor = self.dark_color
 
+    def set_score(self, score):
+        self.high_score = score
+        self.high_score_label.text = str(score)
+
 
 class PlayScreen(Screen):
-    all_colors = ["red", "blue", "green", "yellow", "orange", "purple", "pink"]
+    all_colors = ["red", "blue", "green", "yellow", "orange", "purple", "turquoise", "pink"]
     colors = []
     blocks = []
     touch_accuracy = 30
@@ -331,9 +335,13 @@ class PlayScreen(Screen):
                 x.check_color()
 
     def game_over(self):
+        menu = self.manager.get_screen('menu')
         self.game_active = False
         self.canvas.add(self.shadow)
         self.add_widget(self.lose_info)
+
+        if self.score > menu.high_score:
+            menu.set_score(self.score)
 
     def try_again(self):
         self.remove_widget(self.lose_info)

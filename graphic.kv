@@ -13,6 +13,7 @@
     on_release: root.parent.parent.manager.current = 'menu'
 
 <MenuScreen>:
+    high_score_label: high_score_label
     FloatLayout:
         BoxLayout:
             size_hint: (.5, .2)
@@ -23,6 +24,7 @@
                 source: "img/trophy.png"
 
             Label:
+                id: high_score_label
                 text: str(root.high_score)
                 font_size: root.height/15
 
