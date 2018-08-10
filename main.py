@@ -48,8 +48,61 @@ class Block(ButtonBehavior, Image):
         parent.blocks[y - 1][x + 1].destroy()
         self.destroy()
 
+    def check_line(self, blockup1, blockup2, blockdown1, blockdown2):
+        parent = self.parent.parent.parent
+
+        blocks_to_destroy = []
+
+        if blockup1 is not None and blockdown1 is not None and self.c == blockup1.c and self.c == blockdown1.c:
+            if blockup2 is not None and self.c == blockup2.c:
+                blocks_to_destroy.append(blockup2)
+                parent.add_bomb()
+
+            blocks_to_destroy.append(blockup1)
+            blocks_to_destroy.append(self)
+            blocks_to_destroy.append(blockdown1)
+
+            if blockdown2 is not None and self.c == blockdown2.c:
+                blocks_to_destroy.append(blockdown2)
+                parent.add_bomb()
+
+        if blockup1 is not None and blockup2 is not None and self.c == blockup1.c and self.c == blockup2.c:
+            blocks_to_destroy.append(blockup2)
+            blocks_to_destroy.append(blockup1)
+            blocks_to_destroy.append(self)
+
+        if blockdown1 is not None and blockdown2 is not None and self.c == blockdown1.c and self.c == blockdown2.c:
+            blocks_to_destroy.append(self)
+            blocks_to_destroy.append(blockdown1)
+            blocks_to_destroy.append(blockdown2)
+
+        return blocks_to_destroy
+
     def look_for_line(self, destroy=True, look_for_black=True):
-        blocks_to_destroy = self.check_horizontal() + self.check_vertical()
+        parent = self.parent.parent.parent
+        x = self.index_x
+        y = self.index_y
+        up, down, right, left, up2, down2, right2, left2 \
+            = None, None, None, None, None, None, None, None
+        if x > 0:
+            left = parent.blocks[y][x - 1]
+            if x > 1:
+                left2 = parent.blocks[y][x - 2]
+        if x < parent.board_size - 1:
+            right = parent.blocks[y][x + 1]
+            if x < parent.board_size - 2:
+                right2 = parent.blocks[y][x + 2]
+        if y > 0:
+            up = parent.blocks[y - 1][x]
+            if y > 1:
+                up2 = parent.blocks[y - 2][x]
+        if y < parent.board_size - 1:
+            down = parent.blocks[y + 1][x]
+            if y < parent.board_size - 2:
+                down2 = parent.blocks[y + 2][x]
+        horizontal_blocks = self.check_line(left, left2, right, right2)
+        vertical_blocks = self.check_line(up, up2, down, down2)
+        blocks_to_destroy = horizontal_blocks + vertical_blocks
         if len(blocks_to_destroy) > 0:
             if destroy:
                 for block in blocks_to_destroy:
@@ -58,75 +111,6 @@ class Block(ButtonBehavior, Image):
                     block.destroy()
             return True
         return False
-
-    def check_vertical(self):
-        parent = self.parent.parent.parent
-        y = self.index_y
-        x = self.index_x
-
-        blocks_to_destroy = []
-        is_done = False
-        if not y >= parent.board_size - 1 and not y <= 0:
-            if self.c == parent.blocks[y - 1][x].c and self.c == parent.blocks[y + 1][x].c:
-                if y > 1:
-                    if self.c == parent.blocks[y - 2][x].c:
-                        blocks_to_destroy.append(parent.blocks[y - 2][x])
-                        parent.add_bomb()
-                blocks_to_destroy.append(parent.blocks[y - 1][x])
-                blocks_to_destroy.append(self)
-                blocks_to_destroy.append(parent.blocks[y + 1][x])
-                if not y >= parent.board_size - 2:
-                    if self.c == parent.blocks[y + 2][x].c:
-                        blocks_to_destroy.append(parent.blocks[y + 2][x])
-                        parent.add_bomb()
-                is_done = True
-        if y > 1 and not is_done:
-            if self.c == parent.blocks[y - 1][x].c and self.c == parent.blocks[y - 2][x].c:
-                blocks_to_destroy.append(parent.blocks[y - 2][x])
-                blocks_to_destroy.append(parent.blocks[y - 1][x])
-                blocks_to_destroy.append(self)
-                is_done = True
-        if not y >= parent.board_size - 2 and not is_done:
-            if self.c == parent.blocks[y + 1][x].c and self.c == parent.blocks[y + 2][x].c:
-                blocks_to_destroy.append(self)
-                blocks_to_destroy.append(parent.blocks[y + 1][x])
-                blocks_to_destroy.append(parent.blocks[y + 2][x])
-        return blocks_to_destroy
-
-    def check_horizontal(self):
-        parent = self.parent.parent.parent
-        y = self.index_y
-        x = self.index_x
-
-        blocks_to_destroy = []
-        is_done = False
-        if not x >= parent.board_size - 1 and not x <= 0:
-            if self.c == parent.blocks[y][x - 1].c and self.c == parent.blocks[y][x + 1].c:
-                if x > 1:
-                    if self.c == parent.blocks[y][x - 2].c:
-                        blocks_to_destroy.append(parent.blocks[y][x - 2])
-                        parent.add_bomb()
-                if not x >= parent.board_size - 2:
-                    if self.c == parent.blocks[y][x + 2].c:
-                        blocks_to_destroy.append(parent.blocks[y][x + 2])
-                        parent.add_bomb()
-
-                blocks_to_destroy.append(parent.blocks[y][x - 1])
-                blocks_to_destroy.append(self)
-                blocks_to_destroy.append(parent.blocks[y][x + 1])
-                is_done = True
-        if not x <= 0 and not is_done:
-            if self.c == parent.blocks[y][x - 1].c and self.c == parent.blocks[y][x - 2].c:
-                blocks_to_destroy.append(parent.blocks[y][x - 2])
-                blocks_to_destroy.append(parent.blocks[y][x - 1])
-                blocks_to_destroy.append(self)
-                is_done = True
-        if not x >= parent.board_size - 2 and not is_done:
-            if self.c == parent.blocks[y][x + 1].c and self.c == parent.blocks[y][x + 2].c:
-                blocks_to_destroy.append(parent.blocks[y][x + 1])
-                blocks_to_destroy.append(parent.blocks[y][x + 2])
-                blocks_to_destroy.append(self)
-        return blocks_to_destroy
 
     def look_for_black(self):
         parent = self.parent.parent.parent
