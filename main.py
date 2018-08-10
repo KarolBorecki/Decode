@@ -151,7 +151,6 @@ class Block(ButtonBehavior, Image):
                 self.swap_colors(block_above, False)
                 Clock.schedule_once(block_above.fall, 0.0)
         self.check_is_destroyed()
-        self.look_for_line(look_for_black=False)
 
     def destroy(self):
         Clock.schedule_once(self.set_to_destroyed, 0.2)
