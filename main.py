@@ -137,11 +137,15 @@ class Block(NullBlock):
         swap_block_color = swap_block.c
         swap_block.set_color(self.c)
         self.set_color(swap_block_color)
+
         if look:
-            swap_block_looking = swap_block.look_for_line()
-            self_looking = self.look_for_line()
-            if not swap_block_looking and not self_looking:
-                self.swap_colors(swap_block, False)
+            self.check_line_after_swap(swap_block)
+
+    def check_line_after_swap(self, swap_block):
+        swap_block_look_result = swap_block.look_for_line()
+        self_look_result = self.look_for_line()
+        if not swap_block_look_result and not self_look_result:
+            self.swap_colors(swap_block, False)
 
     def check_is_destroyed(self):
         if self.c == "white":
