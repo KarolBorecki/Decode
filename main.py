@@ -193,19 +193,15 @@ class Block(NullBlock):
 
     def get_block_by_direction(self, direction):
         parent = self.parent.parent.parent
-        swap_block_y = self.index_y
-        swap_block_x = self.index_x
 
         if direction == "up" and self.index_y > 0:
-            swap_block_y -= 1
+            return self.block_up
         elif direction == "down" and self.index_y < parent.board_size - 1:
-            swap_block_y += 1
+            return self.block_down
         elif direction == "left" and self.index_x > 0:
-            swap_block_x -= 1
+            return self.block_left
         elif direction == "right" and self.index_x < parent.board_size - 1:
-            swap_block_x += 1
-
-        return parent.blocks[swap_block_y][swap_block_x]
+            return self.block_right
 
     def print_index(self):
         print("y: " + str(self.index_y) + " x: " + str(self.index_x))
