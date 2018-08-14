@@ -110,19 +110,8 @@ class Block(NullBlock):
         return False
 
     def look_for_black(self):
-        parent = self.parent.parent.parent
-        if not self.index_y >= parent.board_size - 1:
-            if parent.blocks[self.index_y + 1][self.index_x].c == "black":
-                parent.game_over()
-        if not self.index_y <= 0:
-            if parent.blocks[self.index_y - 1][self.index_x].c == "black":
-                parent.game_over()
-        if not self.index_x >= parent.board_size - 1:
-            if parent.blocks[self.index_y][self.index_x + 1].c == "black":
-                parent.game_over()
-        if not self.index_x <= 0:
-            if parent.blocks[self.index_y][self.index_x - 1].c == "black":
-                parent.game_over()
+        if self.block_left.c == "black" or self.block_right.c == "black" or self.block_up.c == "black" or self.block_down.c == "black":
+            self.parent.parent.parent.game_over()
 
     def fall(self, dt):
         parent = self.parent.parent.parent
