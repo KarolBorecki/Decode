@@ -160,11 +160,11 @@ class Block(NullBlock):
         if parent.actual_chance_for_black < 30:
             available_colors = [x for x in parent.colors if x != self.c]
             c = random.choice(available_colors)
+            parent.actual_chance_for_black += 1
             self.set_color(c)
         else:
             self.set_color("black")
             parent.actual_chance_for_black = 0
-        parent.actual_chance_for_black += 1
 
     def check_block_nearby(self):
         parent = self.parent.parent.parent
