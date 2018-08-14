@@ -66,33 +66,33 @@ class Block(NullBlock):
         self.block_down.destroy()
         self.block_down.block_right.destroy()
 
-    def check_line(self, blockup1, blockup2, blockdown1, blockdown2):
+    def check_line(self, side_a1, side_a2, side_b1, side_b2):
         parent = self.parent.parent.parent
 
         blocks_to_destroy = []
 
-        if blockup1 is not None and blockdown1 is not None and self.c == blockup1.c and self.c == blockdown1.c:
-            if blockup2 is not None and self.c == blockup2.c:
-                blocks_to_destroy.append(blockup2)
+        if self.c == side_a1.c and self.c == side_b1.c:
+            if side_a2 is not None and self.c == side_a2.c:
+                blocks_to_destroy.append(side_a2)
                 parent.add_bomb()
 
-            blocks_to_destroy.append(blockup1)
+            blocks_to_destroy.append(side_a1)
             blocks_to_destroy.append(self)
-            blocks_to_destroy.append(blockdown1)
+            blocks_to_destroy.append(side_b1)
 
-            if blockdown2 is not None and self.c == blockdown2.c:
-                blocks_to_destroy.append(blockdown2)
+            if self.c == side_b2.c:
+                blocks_to_destroy.append(side_b2)
                 parent.add_bomb()
 
-        if blockup1 is not None and blockup2 is not None and self.c == blockup1.c and self.c == blockup2.c:
-            blocks_to_destroy.append(blockup2)
-            blocks_to_destroy.append(blockup1)
+        if self.c == side_a1.c and self.c == side_a2.c:
+            blocks_to_destroy.append(side_a2)
+            blocks_to_destroy.append(side_a1)
             blocks_to_destroy.append(self)
 
-        if blockdown1 is not None and blockdown2 is not None and self.c == blockdown1.c and self.c == blockdown2.c:
+        if self.c == side_b1.c and self.c == side_b2.c:
             blocks_to_destroy.append(self)
-            blocks_to_destroy.append(blockdown1)
-            blocks_to_destroy.append(blockdown2)
+            blocks_to_destroy.append(side_b1)
+            blocks_to_destroy.append(side_b2)
 
         return blocks_to_destroy
 
