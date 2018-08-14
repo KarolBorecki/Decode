@@ -149,15 +149,10 @@ class Block(NullBlock):
 
     def check_color(self):
         self.check_block_nearby()
-        parent = self.parent.parent.parent
-        x1 = parent.blocks[self.index_y][self.index_x - 1].c
-        x2 = parent.blocks[self.index_y][self.index_x - 2].c
-        y1 = parent.blocks[self.index_y - 1][self.index_x].c
-        y2 = parent.blocks[self.index_y - 2][self.index_x].c
 
-        if self.c == x1 and self.c == x2:
+        if self.c == self.block_left.c and self.c == self.block_left2.c:
             self.randomize_color()
-        if self.c == y1 and self.c == y2:
+        if self.c == self.block_up.c and self.c == self.block_up2.c:
             self.randomize_color()
 
     def randomize_color(self):
