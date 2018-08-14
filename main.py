@@ -47,23 +47,24 @@ class Block(NullBlock):
         parent = self.parent.parent.parent
         parent.block_pressed(self)
         if self.parent.parent.parent.is_bomb_drag:
-            parent.add_bomb(-1)
             self.blow()
-            parent.bomb_unactive()
 
     def blow(self):
         parent = self.parent.parent.parent
-        y = self.index_y
-        x = self.index_x
-        parent.blocks[y + 1][x].destroy()
-        parent.blocks[y - 1][x].destroy()
-        parent.blocks[y][x + 1].destroy()
-        parent.blocks[y][x - 1].destroy()
-        parent.blocks[y + 1][x - 1].destroy()
-        parent.blocks[y - 1][x - 1].destroy()
-        parent.blocks[y + 1][x + 1].destroy()
-        parent.blocks[y - 1][x + 1].destroy()
+        if 0 < self.index_y < parent.board_size - 1 and 0 < self.index_x < parent.board_size - 1:
+            parent.add_bomb(-1)
+            self.destroy_blocks_nearby()
+            parent.bomb_unactive()
+
+    def destroy_blocks_nearby(self):
+        self.block_up.block_left.destroy()
+        self.block_up.destroy()
+        self.block_up.block_right.destroy()
+        self.block_left.destroy()
         self.destroy()
+        self.block_down.block_left.destroy()
+        self.block_down.destroy()
+        self.block_down.block_right.destroy()
 
     def check_line(self, blockup1, blockup2, blockdown1, blockdown2):
         parent = self.parent.parent.parent
