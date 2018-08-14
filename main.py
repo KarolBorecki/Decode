@@ -114,12 +114,10 @@ class Block(NullBlock):
             self.parent.parent.parent.game_over()
 
     def fall(self, dt):
-        parent = self.parent.parent.parent
         if self.index_y > 0:
             if self.c == "white":
-                block_above = parent.blocks[self.index_y - 1][self.index_x]
-                self.swap_colors(block_above, False)
-                Clock.schedule_once(block_above.fall, 0.0)
+                self.swap_colors(self.block_up, False)
+                Clock.schedule_once(self.block_up.fall, 0.0)
         self.check_is_destroyed()
 
     def destroy(self):
