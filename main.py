@@ -19,6 +19,9 @@ Builder.load_file('graphic.kv')
 
 
 class Block(ButtonBehavior, Image):
+    block_up, block_down, block_right, block_left, block_up2, block_down2, block_right2, block_left2 \
+        = None, None, None, None, None, None, None, None
+
     def __init__(self, c, x, y, **kwargs):
         super(Block, self).__init__(**kwargs)
         self.index_x = x
@@ -164,6 +167,7 @@ class Block(ButtonBehavior, Image):
             self.randomize_color()
 
     def check_color(self):
+        self.check_block_nearby()
         parent = self.parent.parent.parent
         x1 = parent.blocks[self.index_y][self.index_x - 1].c
         x2 = parent.blocks[self.index_y][self.index_x - 2].c
@@ -185,6 +189,31 @@ class Block(ButtonBehavior, Image):
             self.set_color("black")
             parent.actual_chance_for_black = 0
         parent.actual_chance_for_black += 1
+
+    def check_block_nearby(self):
+        parent = self.parent.parent.parent
+        x = self.index_x
+        y = self.index_y
+        if x > 0:
+            self.block_left = parent.blocks[y][x - 1]
+            if x > 1:
+                self.block_left2 = parent.blocks[y][x - 2]
+            else:
+                self.block_left2 = parent.null_block
+        else:
+            self.block_left = parent.null_block
+        if x < parent.board_size - 1:
+            self.block_right = parent.blocks[y][x + 1]
+            if x < parent.board_size - 2:
+                self.block_right2 = parent.blocks[y][x + 2]
+        if y > 0:
+            self.block_up = parent.blocks[y - 1][x]
+            if y > 1:
+                self.block_up2 = parent.blocks[y - 2][x]
+        if y < parent.board_size - 1:
+            self.block_down = parent.blocks[y + 1][x]
+            if y < parent.board_size - 2:
+                self.block_down2 = parent.blocks[y + 2][x]
 
     def set_color(self, c):
         self.c = c
