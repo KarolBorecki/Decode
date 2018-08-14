@@ -34,7 +34,7 @@ class NullBlock(ButtonBehavior, Image):
 
 class Block(NullBlock):
     block_up, block_down, block_right, block_left, block_up2, block_down2, block_right2, block_left2 \
-        = None, None, None, None, None, None, None, None
+        = NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock()
 
     def __init__(self, c, x, y, **kwargs):
         super(Block, self).__init__(**kwargs)
@@ -212,10 +212,6 @@ class Block(NullBlock):
             self.block_left = parent.blocks[y][x - 1]
             if x > 1:
                 self.block_left2 = parent.blocks[y][x - 2]
-            else:
-                self.block_left2 = parent.null_block
-        else:
-            self.block_left = parent.null_block
         if x < parent.board_size - 1:
             self.block_right = parent.blocks[y][x + 1]
             if x < parent.board_size - 2:
