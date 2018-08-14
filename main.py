@@ -18,7 +18,23 @@ Window.size = (400, 700)
 Builder.load_file('graphic.kv')
 
 
-class Block(ButtonBehavior, Image):
+class NullBlock(ButtonBehavior, Image):
+    index_x, index_y = 0, 0
+    c = ""
+
+    def __init__(self, **kwargs):
+        super(NullBlock, self).__init__(**kwargs)
+
+    def destroy(self):
+        return
+
+    def look_for_black(self):
+        return
+
+
+class Block(NullBlock):
+    up_block = NullBlock()
+
     def __init__(self, c, x, y, **kwargs):
         super(Block, self).__init__(**kwargs)
         self.index_x = x
