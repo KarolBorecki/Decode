@@ -97,29 +97,8 @@ class Block(NullBlock):
         return blocks_to_destroy
 
     def look_for_line(self, destroy=True, look_for_black=True):
-        parent = self.parent.parent.parent
-        x = self.index_x
-        y = self.index_y
-        up, down, right, left, up2, down2, right2, left2 \
-            = None, None, None, None, None, None, None, None
-        if x > 0:
-            left = parent.blocks[y][x - 1]
-            if x > 1:
-                left2 = parent.blocks[y][x - 2]
-        if x < parent.board_size - 1:
-            right = parent.blocks[y][x + 1]
-            if x < parent.board_size - 2:
-                right2 = parent.blocks[y][x + 2]
-        if y > 0:
-            up = parent.blocks[y - 1][x]
-            if y > 1:
-                up2 = parent.blocks[y - 2][x]
-        if y < parent.board_size - 1:
-            down = parent.blocks[y + 1][x]
-            if y < parent.board_size - 2:
-                down2 = parent.blocks[y + 2][x]
-        horizontal_blocks = self.check_line(left, left2, right, right2)
-        vertical_blocks = self.check_line(up, up2, down, down2)
+        horizontal_blocks = self.check_line(self.block_left, self.block_left2, self.block_right, self.block_right2)
+        vertical_blocks = self.check_line(self.block_up, self.block_up2, self.block_down, self.block_down2)
         blocks_to_destroy = horizontal_blocks + vertical_blocks
         if len(blocks_to_destroy) > 0:
             if destroy:
