@@ -109,6 +109,9 @@ class Block(NullBlock):
             return True
         return False
 
+    def look_for_group(self):
+        pass
+
     def look_for_black(self):
         if self.block_left.c == "black" or self.block_right.c == "black" or self.block_up.c == "black" or self.block_down.c == "black":
             self.parent.parent.parent.game_over()
