@@ -39,8 +39,8 @@ class Block(NullBlock):
         super(Block, self).__init__(**kwargs)
         self.index_x = x
         self.index_y = y
-        self.c = c
-        self.load_source()
+
+        self.set_color(c)
 
     def on_press(self):
         parent = self.parent.parent.parent
@@ -99,6 +99,7 @@ class Block(NullBlock):
         horizontal_blocks = self.check_line(self.block_left, self.block_left2, self.block_right, self.block_right2)
         vertical_blocks = self.check_line(self.block_up, self.block_up2, self.block_down, self.block_down2)
         blocks_to_destroy = horizontal_blocks + vertical_blocks
+
         if len(blocks_to_destroy) > 0:
             if destroy:
                 for block in blocks_to_destroy:
@@ -207,7 +208,7 @@ class Block(NullBlock):
             return self.block_right
 
     def print_index(self):
-        print("y: " + str(self.index_y) + " x: " + str(self.index_x))
+        print("y: " + str(self.index_y) + " x: " + str(self.index_x) + " color: " + self.c)
 
     def load_source(self):
         self.source = "img/blocks/" + str(self.c) + "_block.png"
@@ -375,6 +376,12 @@ class PlayScreen(Screen):
 
             self.last_touched_block.move(direction)
         super(PlayScreen, self).on_touch_up(touch)
+
+    def print_board(self):
+        for y in self.blocks:
+            for block in y:
+                block.print_index()
+            print("\n")
 
 
 class OptionButton(Button):
