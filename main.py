@@ -4,7 +4,6 @@ from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
 from kivy.graphics.context_instructions import Color
-from kivy.graphics.instructions import InstructionGroup
 from kivy.graphics.vertex_instructions import Rectangle
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
@@ -305,15 +304,23 @@ class PlayScreen(Screen):
         self.blocks = []
         self.board.clear_widgets()
         self.board.cols = self.board_size
+
+        self.random_choice_blocks_colors()
+        self.add_blocks_to_board()
+        self.check_blocks_colors()
+
+    def random_choice_blocks_colors(self):
         for y in range(self.board_size):
             self.blocks.append([])
             for x in range(self.board_size):
                 self.blocks[y].append(Block(random.choice(self.colors), x, y))
 
+    def add_blocks_to_board(self):
         for x in range(self.board_size):
             for block in self.blocks[x]:
                 self.board.add_widget(block)
 
+    def check_blocks_colors(self):
         for y in self.blocks:
             for x in y:
                 x.check_color()
