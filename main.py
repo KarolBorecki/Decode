@@ -44,6 +44,7 @@ class Block(NullBlock):
 
     def on_press(self):
         parent = self.parent.parent.parent
+        self.look_for_group()
         parent.block_pressed(self)
         if self.parent.parent.parent.is_bomb_drag:
             self.blow()
@@ -152,14 +153,6 @@ class Block(NullBlock):
 
     def check_is_destroyed(self):
         if self.c == "white":
-            self.randomize_color()
-
-    def check_color(self):
-        self.check_block_nearby()
-
-        if self.c == self.block_left.c and self.c == self.block_left2.c:
-            self.randomize_color()
-        if self.c == self.block_up.c and self.c == self.block_up2.c:
             self.randomize_color()
 
     def randomize_color(self):
@@ -311,7 +304,7 @@ class PlayScreen(Screen):
 
         self.random_choice_blocks_colors()
         self.add_blocks_to_board()
-        self.check_blocks_colors()
+        self.check_blocks_nearby()
 
     def random_choice_blocks_colors(self):
         for y in range(self.board_size):
@@ -324,10 +317,10 @@ class PlayScreen(Screen):
             for block in self.blocks[x]:
                 self.board.add_widget(block)
 
-    def check_blocks_colors(self):
+    def check_blocks_nearby(self):
         for y in self.blocks:
             for x in y:
-                x.check_color()
+                x.check_block_nearby()
 
     def game_over(self):
         menu = self.manager.get_screen('menu')
