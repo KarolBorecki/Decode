@@ -114,11 +114,35 @@ class Block(NullBlock):
         horizontal = self.get_horizontal_same_color()
         vertical = self.get_vertical_same_color()
 
+        additional_horizontal = ['']
+        additional_vertical = ['']
+        vertical_turn = True
+        horizontal_turn = True
+
         blocks_nearby = horizontal + vertical
-        for block in horizontal:
-            blocks_nearby += block.get_vertical_same_color()
-        for block in vertical:
-            blocks_nearby += block.get_horizontal_same_color()
+        while len(additional_vertical) > 0:
+            additional_vertical = []
+            for block in horizontal:
+                if vertical_turn:
+                    additional_vertical += block.get_vertical_same_color()
+                else:
+                    additional_vertical += block.get_horizontal_same_color()
+
+            blocks_nearby += additional_vertical
+            horizontal = additional_vertical
+            vertical_turn = not vertical_turn
+
+        while len(additional_horizontal) > 0:
+            additional_horizontal = []
+            for block in vertical:
+                if horizontal_turn:
+                    additional_horizontal += block.get_horizontal_same_color()
+                else:
+                    additional_horizontal += block.get_vertical_same_color()
+
+            blocks_nearby += additional_horizontal
+            vertical = additional_horizontal
+            horizontal_turn = not horizontal_turn
         return blocks_nearby
 
     def click_destroy(self):
@@ -292,7 +316,7 @@ class PlayScreen(Screen):
     blocks = []
     touch_accuracy = 30
     board_size = 8
-    color_count = 6
+    color_count = 2
 
     score = 0
     bombs_count = 0
