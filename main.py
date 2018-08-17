@@ -44,7 +44,7 @@ class Block(NullBlock):
 
     def on_press(self):
         parent = self.parent.parent.parent
-        self.look_for_group()
+        self.click_destroy()
         parent.block_pressed(self)
         if self.parent.parent.parent.is_bomb_drag:
             self.blow()
@@ -111,7 +111,51 @@ class Block(NullBlock):
         return False
 
     def look_for_group(self):
-        pass
+        horizontal = self.get_horizontal_same_color()
+        vertical = self.get_vertical_same_color()
+
+        blocks_nearby = horizontal + vertical
+        for block in horizontal:
+            blocks_nearby += block.get_vertical_same_color()
+        for block in vertical:
+            blocks_nearby += block.get_horizontal_same_color()
+        return blocks_nearby
+
+    def click_destroy(self):
+        to_destroy = self.look_for_group()
+        if len(to_destroy) > 0:
+            to_destroy.append(self)
+
+        if len(to_destroy) > 2:
+            for block in to_destroy:
+                block.look_for_black()
+                block.destroy()
+
+    def get_horizontal_same_color(self):
+        return self.check_left() + self.check_right()
+
+    def get_vertical_same_color(self):
+        return self.check_up() + self.check_down()
+
+    def check_up(self):
+        if self.block_up.c == self.c:
+            return [self.block_up] + self.block_up.check_up()
+        return []
+
+    def check_down(self):
+        if self.block_down.c == self.c:
+            return [self.block_down] + self.block_down.check_down()
+        return []
+
+    def check_left(self):
+        if self.block_left.c == self.c:
+            return [self.block_left] + self.block_left.check_left()
+        return []
+
+    def check_right(self):
+        if self.block_right.c == self.c:
+            return [self.block_right] + self.block_right.check_right()
+        return []
 
     def look_for_black(self):
         if self.block_left.c == "black" or self.block_right.c == "black" or self.block_up.c == "black" or self.block_down.c == "black":
@@ -129,7 +173,7 @@ class Block(NullBlock):
 
     def set_to_destroyed(self, dt):
         self.set_color("white")
-        Clock.schedule_once(self.fall, 0.05)
+        Clock.schedule_once(self.fall, 0.2)
         self.parent.parent.parent.add_score(10)
 
     def move(self, direction):
