@@ -1,5 +1,27 @@
+#:import Window kivy.core.window.Window
+
 <Widget>:
     font_name: "fonts/font.ttf"
+
+<GameOverScreen>:
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    size_hint: (1, 1)
+
+    canvas:
+        Color:
+            rgba: 0, 0, 0, .2
+
+        Rectangle:
+            size: root.size
+
+    Image:
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        source: "img/game_over.png"
+
+    Label:
+        pos_hint: {'center_x': .5, 'center_y': .2}
+        text: "Tap to try again"
+        font_size: self.height * 0.05
 
 <SquareButton>:
     size_hint_x: .12

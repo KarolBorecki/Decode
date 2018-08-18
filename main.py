@@ -3,14 +3,11 @@ import random
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
-from kivy.graphics.context_instructions import Color
-from kivy.graphics.vertex_instructions import Rectangle
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
-from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 s1, s2, s3, s4 = (400, 700), (200, 350), (100, 170), (600, 900)
