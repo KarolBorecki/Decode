@@ -111,39 +111,30 @@ class Block(NullBlock):
         return False
 
     def look_for_group(self):
-        horizontal = self.get_horizontal_same_color()
-        vertical = self.get_vertical_same_color()
+        founded_group = []
+        blocks = [self]
 
-        additional_horizontal = ['']
-        additional_vertical = ['']
-        vertical_turn = True
-        horizontal_turn = True
+        if len(self.get_vertical_same_color()) > 0:
+            blocks += self.get_vertical_same_color()
+            turn = False
+        else:
+            blocks += self.get_horizontal_same_color()
+            turn = True
 
-        blocks_nearby = horizontal + vertical
-        while len(additional_vertical) > 0:
-            additional_vertical = []
-            for block in horizontal:
-                if vertical_turn:
-                    additional_vertical += block.get_vertical_same_color()
-                else:
-                    additional_vertical += block.get_horizontal_same_color()
+        while len(blocks) > 0:
+            founded_in_row = []
+            for block in blocks:
+                if block not in founded_group:
+                    if turn:
+                        founded_in_row += block.get_vertical_same_color()
+                    else:
+                        founded_in_row += block.get_horizontal_same_color()
 
-            blocks_nearby += additional_vertical
-            horizontal = additional_vertical
-            vertical_turn = not vertical_turn
+            founded_group += blocks
+            blocks = founded_in_row
+            turn = not turn
 
-        while len(additional_horizontal) > 0:
-            additional_horizontal = []
-            for block in vertical:
-                if horizontal_turn:
-                    additional_horizontal += block.get_horizontal_same_color()
-                else:
-                    additional_horizontal += block.get_vertical_same_color()
-
-            blocks_nearby += additional_horizontal
-            vertical = additional_horizontal
-            horizontal_turn = not horizontal_turn
-        return blocks_nearby
+        return founded_group
 
     def click_destroy(self):
         to_destroy = self.look_for_group()
