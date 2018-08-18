@@ -13,7 +13,9 @@ from kivy.uix.image import Image
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import ScreenManager, Screen
 
-Window.size = (400, 700)
+s1, s2, s3, s4 = (400, 700), (200, 350), (100, 170), (600, 900)
+
+Window.size = s1
 Builder.load_file('graphic.kv')
 
 
@@ -274,6 +276,11 @@ class SquareButton(ButtonBehavior, Image):
         super(SquareButton, self).__init__(**kwargs)
 
 
+class GameOverScreen(FloatLayout):
+    def __init__(self, **kwargs):
+        super(GameOverScreen, self).__init__(**kwargs)
+
+
 class MenuScreen(Screen):
     high_score = 0
 
@@ -323,11 +330,7 @@ class PlayScreen(Screen):
 
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
-        self.lose_info = FloatLayout(pos_hint={'center_x': .5, 'center_y': .5}, size_hint=(1, 1))
-        self.lose_info.add_widget(Image(source="img/game_over.png", pos_hint={'center_x': .5, 'center_y': .5}))
-        self.lose_info.add_widget(Label(text="Tap to try again", font_size=20, pos_hint={'center_x': .5, 'center_y': .2}))
-        self.canvas.add(Color(0, 0, 0, 0.3))
-        self.shadow = Rectangle(size=(Window.width, Window.height))
+        self.lose_info = GameOverScreen()
         self.start_game()
 
     def bomb_drag(self):
@@ -382,17 +385,16 @@ class PlayScreen(Screen):
                 x.check_block_nearby()
 
     def game_over(self):
+        print (self.children)
+        self.add_widget(self.lose_info)
         menu = self.manager.get_screen('menu')
         self.game_active = False
-        self.canvas.add(self.shadow)
-        self.add_widget(self.lose_info)
 
         if self.score > menu.high_score:
             menu.set_score(self.score)
 
     def try_again(self):
         self.remove_widget(self.lose_info)
-        self.canvas.remove(self.shadow)
         self.score = 0
         self.score_board.text = str(self.score)
         self.bombs_count = 0
@@ -405,32 +407,34 @@ class PlayScreen(Screen):
         if self.game_active:
             self.last_x = touch.pos[0]
             self.last_y = touch.pos[1]
-        else:
-            self.try_again()
 
         super(PlayScreen, self).on_touch_down(touch)
 
     def on_touch_up(self, touch):
-        if self.last_touched_block is not None and self.game_active:
-            self.actually_x = touch.pos[0]
-            self.actually_y = touch.pos[1]
-            dif_x = self.actually_x - self.last_x
-            dif_y = self.actually_y - self.last_y
+        if self.game_active:
+            if self.last_touched_block is not None:
+                self.actually_x = touch.pos[0]
+                self.actually_y = touch.pos[1]
+                dif_x = self.actually_x - self.last_x
+                dif_y = self.actually_y - self.last_y
 
-            direction = ""
-            if dif_y > self.touch_accuracy:
-                direction = "up"
-            elif dif_y < -self.touch_accuracy:
-                direction = "down"
-            elif dif_x > self.touch_accuracy:
-                direction = "right"
-            elif dif_x < -self.touch_accuracy:
-                direction = "left"
-            else:
-                self.last_touched_block.click_destroy()
-                return
+                direction = ""
+                if dif_y > self.touch_accuracy:
+                    direction = "up"
+                elif dif_y < -self.touch_accuracy:
+                    direction = "down"
+                elif dif_x > self.touch_accuracy:
+                    direction = "right"
+                elif dif_x < -self.touch_accuracy:
+                    direction = "left"
+                else:
+                    self.last_touched_block.click_destroy()
+                    return
 
-            self.last_touched_block.move(direction)
+                self.last_touched_block.move(direction)
+        else:
+            self.try_again()
+
         super(PlayScreen, self).on_touch_up(touch)
 
     def print_board(self):
