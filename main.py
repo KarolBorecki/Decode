@@ -44,7 +44,6 @@ class Block(NullBlock):
 
     def on_press(self):
         parent = self.parent.parent.parent
-        self.click_destroy()
         parent.block_pressed(self)
         if self.parent.parent.parent.is_bomb_drag:
             self.blow()
@@ -62,6 +61,7 @@ class Block(NullBlock):
         self.block_up.block_right.destroy()
         self.block_left.destroy()
         self.destroy()
+        self.block_right.destroy()
         self.block_down.block_left.destroy()
         self.block_down.destroy()
         self.block_down.block_right.destroy()
@@ -307,7 +307,7 @@ class PlayScreen(Screen):
     blocks = []
     touch_accuracy = 30
     board_size = 8
-    color_count = 2
+    color_count = 5
 
     score = 0
     bombs_count = 0
@@ -427,6 +427,7 @@ class PlayScreen(Screen):
             elif dif_x < -self.touch_accuracy:
                 direction = "left"
             else:
+                self.last_touched_block.click_destroy()
                 return
 
             self.last_touched_block.move(direction)
