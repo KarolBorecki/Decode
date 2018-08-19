@@ -534,9 +534,9 @@ sm.add_widget(InfoScreen(name='info'))
 class Decode(App):
     def build(self):
         save_file = open("save.txt", "r")
-        data = save_file.readlines()
+        sm.get_screen('menu').set_score(int(save_file.readlines()[0]))
         save_file.close()
-        sm.get_screen('menu').set_score(int(data[0]))
+
         return sm
 
     def on_stop(self):
