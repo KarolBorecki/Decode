@@ -43,8 +43,9 @@ class Block(NullBlock):
 
     def on_press(self):
         parent = self.parent.parent.parent
-        parent.block_pressed(self)
-        if self.parent.parent.parent.is_bomb_drag:
+        if not parent.is_bomb_drag:
+            parent.block_pressed(self)
+        else:
             self.blow()
 
     def blow(self):
