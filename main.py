@@ -215,7 +215,7 @@ class Block(NullBlock):
 
     def randomize_color(self):
         parent = self.parent.parent.parent
-        if parent.actual_chance_for_black < 30:
+        if parent.actual_chance_for_black < 20:
             available_colors = [x for x in parent.colors if x != self.c]
             c = random.choice(available_colors)
             parent.actual_chance_for_black += 1
@@ -447,7 +447,7 @@ class OptionButton(Button):
         self.option = option
 
         self.text = str(option)
-        self.font_size = 17
+        self.font_size = self.height * 0.2
         self.background_color = (.3, .5, 1, .8)
 
 
@@ -456,7 +456,7 @@ class SettingsScreen(Screen):
     colors_count_options = [4, 5, 6, 7, 8]
 
     board_size = 8
-    color_count = 6
+    color_count = 5
 
     board_size_btn = None
     color_count_btn = None
@@ -467,6 +467,8 @@ class SettingsScreen(Screen):
             btn = OptionButton(size)
             btn.bind(on_press=self.change_board)
             if size == self.board_size:
+                print("size: " + str(size))
+                print (btn.option)
                 btn.disabled = True
                 self.board_size_btn = btn
             self.board_size_grid.add_widget(btn)

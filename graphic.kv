@@ -135,76 +135,83 @@
 <SettingsScreen>:
     board_size_grid: board_size_grid
     colors_count_grid: colors_count_grid
+
     FloatLayout:
         BoxLayout:
             orientation: 'vertical'
-            size_hint_y: .25
-            pos_hint: {'center_x': .5, 'center_y': .85}
+            size_hint_y: 1
+            pos_hint: {"top": 1}
+
+            BoxLayout:
+                orientation: 'vertical'
+
+                Label:
+                    text: "Board size:"
+                    font_size: self.height * 0.3
+
+                GridLayout:
+                    id: board_size_grid
+                    size_hint_x: .85
+                    pos_hint: {"center_x": .5}
+                    spacing: 5
+                    row_default_height: self.width/len(root.board_size_options)
+                    row_force_default: True
+                    cols: len(root.board_size_options)
+            BoxLayout:
+                orientation: 'vertical'
+
+                Label:
+                    text: "Colors:"
+                    font_size: self.height * 0.3
+
+                GridLayout:
+                    id: colors_count_grid
+                    size_hint_x: .85
+                    pos_hint: {"center_x": .5}
+                    spacing: 5
+                    row_default_height: self.width/len(root.colors_count_options)
+                    row_force_default: True
+                    cols: len(root.colors_count_options)
 
             Label:
+                text: "Change of game settings may cause lags \n score will not be saved!"
+                halign: 'center'
+                font_size: self.height * 0.15
 
-                text: "Board size:"
-                font_size: 20
-
-            GridLayout:
-                id: board_size_grid
-                pos_hint: {'center_x': .5}
-                size_hint_x: .85
-                size_hint_y: None
-                spacing: 5
-                row_default_height: self.width/len(root.board_size_options)
-                row_force_default: True
-                cols: len(root.board_size_options)
-        BoxLayout:
-            orientation: 'vertical'
-            size_hint_y: .25
-            pos_hint: {'center_x': .5, 'center_y': .65}
 
             Label:
-                pos_hint: {'center_x': .5, 'center_y': .7}
-                text: "Colors:"
-                font_size: 20
+                text: "Find me on media!"
+                font_size: self.height * 0.3
 
-            GridLayout:
-                id: colors_count_grid
-                pos_hint: {'center_x': .5, 'center_y': .57}
-                size_hint_x: .85
-                size_hint_y: None
-                spacing: 5
-                row_default_height: self.width/len(root.colors_count_options)
-                row_force_default: True
-                cols: len(root.colors_count_options)
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .8
+                pos_hint: {"center_x": .5}
 
-        Label:
-            pos_hint: {'center_x': .5, 'center_y': .5}
-            text: "Change of game settings may cause lags \n score will not be saved!"
-            halign: 'center'
-            font_size: 15
+                Image:
+                    source: "img/facebook.png"
+                    size_hint_y: .5
+                    pos_hint: {"center_x": .5, "center_y": .5}
 
-        Label:
-            pos_hint: {'center_x': .5, 'center_y': .35}
-            text: "Find me on media!"
-            font_size: 40
+                Label:
+                    text: "/Karol.Borecki.op"
+                    font_size: self.height * 0.15
 
-        Image:
-            size_hint_y: .07
-            pos_hint: {'center_x': .25, 'center_y': .2}
-            source: "img/facebook.png"
 
-        Image:
-            size_hint_y: .07
-            pos_hint: {'center_x': .25, 'center_y': .1}
-            source: "img/github.png"
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: .8
+                pos_hint: {"center_x": .5}
 
-        Label:
-            pos_hint: {'center_x': .65, 'center_y': .2}
-            text: "/Karol.Borecki.op"
-            font_size: 20
+                Image:
+                    source: "img/github.png"
+                    size_hint_y: .5
+                    pos_hint: {"center_x": .5, "center_y": .5}
 
-        Label:
-            pos_hint: {'center_x': .65, 'center_y': .1}
-            text: "/KarolBorecki"
-            font_size: 20
+                Label:
+                    text: "/KarolBorecki"
+                    font_size: self.height * 0.15
+
 
         BackButton:
             id: back
