@@ -401,8 +401,11 @@ class PlayScreen(Screen):
         menu = self.manager.get_screen('menu')
         self.game_active = False
 
-        if self.score > menu.high_score:
-            menu.set_score(self.score)
+        settings_screen = self.manager.get_screen("settings")
+        if settings_screen.board_size == settings_screen.default_board_size \
+                and settings_screen.color_count == settings_screen.default_color_count:
+            if self.score > menu.high_score:
+                menu.set_score(self.score)
 
     def try_again(self):
         self.remove_widget(self.lose_info)
@@ -470,8 +473,11 @@ class SettingsScreen(Screen):
     board_size_options = [4, 6, 8, 10, 15]
     colors_count_options = [4, 5, 6, 7, 8]
 
-    board_size = 8
-    color_count = 6
+    default_board_size = 8
+    default_color_count = 6
+
+    board_size = default_board_size
+    color_count = default_color_count
 
     board_size_btn = None
     color_count_btn = None
