@@ -66,14 +66,11 @@ class Block(NullBlock):
         self.block_down.block_right.destroy()
 
     def check_line(self, side_a1, side_a2, side_b1, side_b2):
-        parent = self.parent.parent.parent
-
         blocks_to_destroy = []
 
         if self.c == side_a1.c and self.c == side_b1.c:
-            if side_a2 is not None and self.c == side_a2.c:
+            if self.c == side_a2.c:
                 blocks_to_destroy.append(side_a2)
-                parent.add_bomb()
 
             blocks_to_destroy.append(side_a1)
             blocks_to_destroy.append(self)
@@ -81,21 +78,23 @@ class Block(NullBlock):
 
             if self.c == side_b2.c:
                 blocks_to_destroy.append(side_b2)
-                parent.add_bomb()
 
-        if self.c == side_a1.c and self.c == side_a2.c:
-            blocks_to_destroy.append(side_a2)
-            blocks_to_destroy.append(side_a1)
-            blocks_to_destroy.append(self)
+        else:
+            if self.c == side_a1.c and self.c == side_a2.c:
+                blocks_to_destroy.append(side_a2)
+                blocks_to_destroy.append(side_a1)
+                blocks_to_destroy.append(self)
 
-        if self.c == side_b1.c and self.c == side_b2.c:
-            blocks_to_destroy.append(self)
-            blocks_to_destroy.append(side_b1)
-            blocks_to_destroy.append(side_b2)
+            if self.c == side_b1.c and self.c == side_b2.c:
+                blocks_to_destroy.append(self)
+                blocks_to_destroy.append(side_b1)
+                blocks_to_destroy.append(side_b2)
 
         return blocks_to_destroy
 
     def look_for_line(self, destroy=True, look_for_black=True):
+        parent = self.parent.parent.parent
+
         horizontal_blocks = self.check_line(self.block_left, self.block_left2, self.block_right, self.block_right2)
         vertical_blocks = self.check_line(self.block_up, self.block_up2, self.block_down, self.block_down2)
         blocks_to_destroy = horizontal_blocks + vertical_blocks
@@ -106,6 +105,14 @@ class Block(NullBlock):
                     if look_for_black:
                         block.look_for_black()
                     block.destroy()
+
+            if len(blocks_to_destroy) > 3:
+                parent.add_bomb()
+
+            if len(blocks_to_destroy) > 4:
+                parent.add_bomb()
+
+            print(len(blocks_to_destroy))
             return True
         return False
 
@@ -140,7 +147,7 @@ class Block(NullBlock):
         if len(to_destroy) > 0:
             to_destroy.append(self)
 
-        if len(to_destroy) > 2:
+        if len(to_destroy) > 3:
             for block in to_destroy:
                 block.look_for_black()
                 block.destroy()
@@ -215,7 +222,7 @@ class Block(NullBlock):
 
     def randomize_color(self):
         parent = self.parent.parent.parent
-        if parent.actual_chance_for_black < 20:
+        if parent.actual_chance_for_black < parent.black_chance:
             available_colors = [x for x in parent.colors if x != self.c]
             c = random.choice(available_colors)
             parent.actual_chance_for_black += 1
@@ -223,6 +230,7 @@ class Block(NullBlock):
         else:
             self.set_color("black")
             parent.actual_chance_for_black = 0
+            parent.black_chance -= 1
 
     def check_block_nearby(self):
         parent = self.parent.parent.parent
@@ -309,19 +317,21 @@ class PlayScreen(Screen):
     all_colors = ["red", "blue", "green", "yellow", "orange", "purple", "turquoise", "pink"]
     colors = []
     blocks = []
-    touch_accuracy = 30
+
+    # static Game settings
     board_size = 8
-    color_count = 5
+    color_count = 6
+    black_chance = 30
+    touch_accuracy = 30
 
     score = 0
     bombs_count = 0
-
+    actual_chance_for_black = 0
     last_x = 0
     last_y = 0
     actually_x = 0
     actually_y = 0
     last_touched_block = None
-    actual_chance_for_black = 0
     game_active = True
     is_bomb_drag = False
 
@@ -456,7 +466,7 @@ class SettingsScreen(Screen):
     colors_count_options = [4, 5, 6, 7, 8]
 
     board_size = 8
-    color_count = 5
+    color_count = 6
 
     board_size_btn = None
     color_count_btn = None
@@ -466,23 +476,18 @@ class SettingsScreen(Screen):
         for size in self.board_size_options:
             btn = OptionButton(size)
             btn.bind(on_press=self.change_board)
+            self.board_size_grid.add_widget(btn)
             if size == self.board_size:
-                print("size: " + str(size))
-                print (btn.option)
                 btn.disabled = True
                 self.board_size_btn = btn
-            self.board_size_grid.add_widget(btn)
 
         for size in self.colors_count_options:
             btn = OptionButton(size)
+            self.colors_count_grid.add_widget(btn)
             btn.bind(on_press=self.change_color)
             if size == self.color_count:
                 btn.disabled = True
                 self.color_count_btn = btn
-            self.colors_count_grid.add_widget(btn)
-
-    def save(self):
-        print("SAVING")
 
     def change_board(self, instance):
         play_screen = self.manager.get_screen('play')
