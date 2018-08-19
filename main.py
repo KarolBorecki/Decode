@@ -113,8 +113,6 @@ class Block(NullBlock):
 
             if len(blocks_to_destroy) > 4:
                 parent.add_bomb()
-
-            print(len(blocks_to_destroy))
             return True
         return False
 
@@ -343,12 +341,15 @@ class PlayScreen(Screen):
         self.start_game()
 
     def bomb_drag(self):
-        if not self.is_bomb_drag and self.bombs_count > 0:
-            self.bomb_active()
-        else:
-            self.bomb_unactive()
+        if self.bombs_count > 0:
+            if not self.is_bomb_drag:
+                self.bomb_active()
+            else:
+                self.bomb_unactive()
+        print (self.is_bomb_drag)
 
     def bomb_active(self):
+        self.last_touched_block = None
         self.is_bomb_drag = True
         self.bomb.size_hint_x = .25
 
@@ -394,8 +395,8 @@ class PlayScreen(Screen):
                 x.check_block_nearby()
 
     def game_over(self):
-        print (self.children)
-        self.add_widget(self.lose_info)
+        if self.lose_info not in self.children:
+            self.add_widget(self.lose_info)
         menu = self.manager.get_screen('menu')
         self.game_active = False
 
@@ -410,10 +411,11 @@ class PlayScreen(Screen):
         self.bomb_label.text = str(self.bombs_count)
         self.bomb_unactive()
         self.game_active = True
+        self.last_touched_block = None
         self.start_game()
 
     def on_touch_down(self, touch):
-        if self.game_active:
+        if self.game_active and not self.is_bomb_drag:
             self.last_x = touch.pos[0]
             self.last_y = touch.pos[1]
 
@@ -421,7 +423,7 @@ class PlayScreen(Screen):
 
     def on_touch_up(self, touch):
         if self.game_active:
-            if self.last_touched_block is not None:
+            if self.last_touched_block is not None and not self.is_bomb_drag:
                 self.actually_x = touch.pos[0]
                 self.actually_y = touch.pos[1]
                 dif_x = self.actually_x - self.last_x
