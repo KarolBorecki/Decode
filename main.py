@@ -49,21 +49,23 @@ class Block(NullBlock):
 
     def blow(self):
         parent = self.parent.parent.parent
-        if 0 < self.index_y < parent.board_size - 1 and 0 < self.index_x < parent.board_size - 1:
-            parent.add_bomb(-1)
-            self.destroy_blocks_nearby()
-            parent.bomb_unactive()
+        parent.add_bomb(-1)
+        self.destroy_blocks_nearby()
+        parent.bomb_unactive()
 
     def destroy_blocks_nearby(self):
-        self.block_up.block_left.destroy()
-        self.block_up.destroy()
-        self.block_up.block_right.destroy()
+        if self.block_up.c != "":
+            self.block_up.block_left.destroy()
+            self.block_up.block_right.destroy()
+        if self.block_down.c != "":
+            self.block_down.block_left.destroy()
+            self.block_down.block_right.destroy()
+
         self.block_left.destroy()
+        self.block_up.destroy()
         self.destroy()
         self.block_right.destroy()
-        self.block_down.block_left.destroy()
         self.block_down.destroy()
-        self.block_down.block_right.destroy()
 
     def check_line(self, side_a1, side_a2, side_b1, side_b2):
         blocks_to_destroy = []
