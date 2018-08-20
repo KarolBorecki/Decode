@@ -2,6 +2,7 @@ import random
 
 from kivy.app import App
 from kivy.clock import Clock
+from kivy.core.audio.audio_sdl2 import SoundLoader
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
@@ -115,6 +116,7 @@ class Block(NullBlock):
             if len(blocks_to_destroy) > 4:
                 parent.add_bomb()
             return True
+        parent.block_destroy_sound.play()
         return False
 
     def look_for_group(self):
@@ -335,6 +337,8 @@ class PlayScreen(Screen):
     last_touched_block = None
     game_active = True
     is_bomb_drag = False
+
+    block_destroy_sound = SoundLoader.load('sounds/destroy.mp3.wav')
 
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
