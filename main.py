@@ -1,5 +1,6 @@
 import random
 
+from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.audio.audio_sdl2 import SoundLoader
@@ -116,7 +117,6 @@ class Block(NullBlock):
             if len(blocks_to_destroy) > 4:
                 parent.add_bomb()
             return True
-        parent.block_destroy_sound.play()
         return False
 
     def look_for_group(self):
@@ -289,6 +289,14 @@ class GameOverScreen(FloatLayout):
         super(GameOverScreen, self).__init__(**kwargs)
 
 
+class BombActiveScreen(FloatLayout):
+    def __init__(self, **kwargs):
+        super(BombActiveScreen, self).__init__(**kwargs)
+        self.anim = Animation(opacity=0, duration=1) + Animation(opacity=1, duration=1)
+        self.anim.repeat = True
+        self.anim.start(self.background)
+
+
 class MenuScreen(Screen):
     high_score = 0
 
@@ -325,7 +333,7 @@ class PlayScreen(Screen):
     board_size = 8
     color_count = 6
     black_chance = 30
-    touch_accuracy = 30
+    touch_accuracy = 20
 
     score = 0
     bombs_count = 0
@@ -338,11 +346,10 @@ class PlayScreen(Screen):
     game_active = True
     is_bomb_drag = False
 
-    block_destroy_sound = SoundLoader.load('sounds/destroy.mp3.wav')
-
     def __init__(self, **kwargs):
         super(PlayScreen, self).__init__(**kwargs)
         self.lose_info = GameOverScreen()
+        self.bomb_active_screen = BombActiveScreen()
         self.start_game()
 
     def bomb_drag(self):
@@ -351,16 +358,17 @@ class PlayScreen(Screen):
                 self.bomb_active()
             else:
                 self.bomb_unactive()
-        print (self.is_bomb_drag)
 
     def bomb_active(self):
         self.last_touched_block = None
         self.is_bomb_drag = True
         self.bomb.size_hint_x = .25
+        self.add_widget(self.bomb_active_screen)
 
     def bomb_unactive(self):
         self.is_bomb_drag = False
         self.bomb.size_hint_x = .22
+        self.remove_widget(self.bomb_active_screen)
 
     def add_score(self, amount):
         self.score += amount

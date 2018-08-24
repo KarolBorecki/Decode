@@ -22,6 +22,23 @@
         text: "Tap to try again"
         font_size: self.height * 0.05
 
+<BombActiveScreen>:
+    background: background
+    pos_hint: {'center_x': .5, 'center_y': .5}
+    size_hint: (1, 1)
+
+    Image:
+        source: "img/siren.png"
+        pos_hint: {"top": 1}
+        size_hint_y: .15
+
+    Image:
+        id: background
+        source: "img/alarm_background.png"
+        allow_stretch: True
+        keep_ratio: False
+        size: root.size
+
 <SquareButton>:
     size_hint_x: .12
     size_hint_y: None
