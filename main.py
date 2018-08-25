@@ -155,31 +155,9 @@ class Block(NullBlock):
                 block.look_for_black()
                 block.destroy()
 
-    def get_horizontal_same_color(self):
-        return self.check_left() + self.check_right()
-
-    def get_vertical_same_color(self):
-        return self.check_up() + self.check_down()
-
-    def check_up(self):
-        if self.block_up.c == self.c:
-            return [self.block_up] + self.block_up.check_up()
-        return []
-
-    def check_down(self):
-        if self.block_down.c == self.c:
-            return [self.block_down] + self.block_down.check_down()
-        return []
-
-    def check_left(self):
-        if self.block_left.c == self.c:
-            return [self.block_left] + self.block_left.check_left()
-        return []
-
-    def check_right(self):
-        if self.block_right.c == self.c:
-            return [self.block_right] + self.block_right.check_right()
-        return []
+            if len(to_destroy) > 4:
+                parent = self.parent.parent.parent
+                parent.add_score(parent.block_destroy_bonus * len(to_destroy))
 
     def look_for_black(self):
         if self.block_left.c == "black" or self.block_right.c == "black" or self.block_up.c == "black" or self.block_down.c == "black":
@@ -196,9 +174,12 @@ class Block(NullBlock):
         Clock.schedule_once(self.set_to_destroyed, 0.2)
 
     def set_to_destroyed(self, dt):
+        parent = self.parent.parent.parent
         self.set_color("white")
         Clock.schedule_once(self.fall, 0.2)
-        self.parent.parent.parent.add_score(10)
+        parent.add_score()
+        if self.c == "black":
+            parent.add_score(parent.black_bonus)
 
     def move(self, direction):
         swap_block = self.get_block_by_direction(direction)
@@ -256,6 +237,32 @@ class Block(NullBlock):
             if y < parent.board_size - 2:
                 self.block_down2 = parent.blocks[y + 2][x]
 
+    def get_horizontal_same_color(self):
+        return self.check_left() + self.check_right()
+
+    def get_vertical_same_color(self):
+        return self.check_up() + self.check_down()
+
+    def check_up(self):
+        if self.block_up.c == self.c:
+            return [self.block_up] + self.block_up.check_up()
+        return []
+
+    def check_down(self):
+        if self.block_down.c == self.c:
+            return [self.block_down] + self.block_down.check_down()
+        return []
+
+    def check_left(self):
+        if self.block_left.c == self.c:
+            return [self.block_left] + self.block_left.check_left()
+        return []
+
+    def check_right(self):
+        if self.block_right.c == self.c:
+            return [self.block_right] + self.block_right.check_right()
+        return []
+
     def set_color(self, c):
         self.c = c
         self.load_source()
@@ -292,7 +299,7 @@ class GameOverScreen(FloatLayout):
 class BombActiveScreen(FloatLayout):
     def __init__(self, **kwargs):
         super(BombActiveScreen, self).__init__(**kwargs)
-        self.anim = Animation(opacity=0, duration=1) + Animation(opacity=1, duration=1)
+        self.anim = Animation(opacity=0, duration=.7) + Animation(opacity=1, duration=.7)
         self.anim.repeat = True
         self.anim.start(self.background)
 
@@ -334,6 +341,10 @@ class PlayScreen(Screen):
     color_count = 6
     black_chance = 30
     touch_accuracy = 20
+    block_destroy_points = 10
+    block_destroy_bonus = 5
+    black_bonus = 70
+    bomb_bonus = 30
 
     score = 0
     bombs_count = 0
@@ -370,13 +381,17 @@ class PlayScreen(Screen):
         self.bomb.size_hint_x = .22
         self.remove_widget(self.bomb_active_screen)
 
-    def add_score(self, amount):
-        self.score += amount
+    def add_score(self, amount=None):
+        if amount is not None:
+            self.score += amount
+        else:
+            self.score += self.block_destroy_points
         self.score_board.text = str(self.score)
 
     def add_bomb(self, amount=1):
         self.bombs_count += amount
         self.bomb_label.text = str(self.bombs_count)
+        self.add_score(self.bomb_bonus)
 
     def block_pressed(self, block):
         self.last_touched_block = block
@@ -482,7 +497,7 @@ class OptionButton(Button):
 
 
 class SettingsScreen(Screen):
-    board_size_options = [4, 6, 8, 10, 15]
+    board_size_options = [5, 6, 8, 10, 12]
     colors_count_options = [4, 5, 6, 7, 8]
 
     default_board_size = 8
