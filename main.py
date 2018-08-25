@@ -109,13 +109,13 @@ class Block(NullBlock):
                     if look_for_black:
                         block.look_for_black()
                     block.destroy()
-                    Clock.schedule_once(block.fall, 0.2)
 
-            if len(blocks_to_destroy) > 3:
+            if len(horizontal_blocks) > 3 or len(vertical_blocks) > 3:
                 parent.add_bomb()
 
-            if len(blocks_to_destroy) > 4:
+            if len(horizontal_blocks) > 4 or len(vertical_blocks) > 4:
                 parent.add_bomb()
+
             return True
         return False
 
@@ -190,15 +190,12 @@ class Block(NullBlock):
             if self.c == "white":
                 self.swap_colors(self.block_up, False)
                 Clock.schedule_once(self.block_up.fall, 0.0)
-        else:
-            self.check_is_destroyed()
 
     def destroy(self):
         Clock.schedule_once(self.set_to_destroyed, 0.2)
 
     def set_to_destroyed(self, dt):
         self.set_color("white")
-        Clock.schedule_once(self.fall, 0.2)
         Clock.schedule_once(self.fall, 0.2)
         self.parent.parent.parent.add_score(10)
 
