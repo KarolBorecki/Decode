@@ -190,6 +190,7 @@ class Block(NullBlock):
             if self.c == "white":
                 self.swap_colors(self.block_up, False)
                 Clock.schedule_once(self.block_up.fall, 0.0)
+        self.check_is_destroyed()
 
     def destroy(self):
         Clock.schedule_once(self.set_to_destroyed, 0.2)
