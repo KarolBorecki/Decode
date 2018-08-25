@@ -3,7 +3,6 @@ import random
 from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
-from kivy.core.audio.audio_sdl2 import SoundLoader
 from kivy.core.window import Window
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
@@ -12,10 +11,10 @@ from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+Builder.load_file('graphic.kv')
 s1, s2, s3, s4 = (400, 700), (200, 350), (100, 170), (600, 900)
 
 Window.size = s1
-Builder.load_file('graphic.kv')
 
 
 class NullBlock(ButtonBehavior, Image):
@@ -110,6 +109,7 @@ class Block(NullBlock):
                     if look_for_black:
                         block.look_for_black()
                     block.destroy()
+                    Clock.schedule_once(block.fall, 0.2)
 
             if len(blocks_to_destroy) > 3:
                 parent.add_bomb()
@@ -190,13 +190,15 @@ class Block(NullBlock):
             if self.c == "white":
                 self.swap_colors(self.block_up, False)
                 Clock.schedule_once(self.block_up.fall, 0.0)
-        self.check_is_destroyed()
+        else:
+            self.check_is_destroyed()
 
     def destroy(self):
         Clock.schedule_once(self.set_to_destroyed, 0.2)
 
     def set_to_destroyed(self, dt):
         self.set_color("white")
+        Clock.schedule_once(self.fall, 0.2)
         Clock.schedule_once(self.fall, 0.2)
         self.parent.parent.parent.add_score(10)
 
@@ -300,7 +302,7 @@ class BombActiveScreen(FloatLayout):
 class MenuScreen(Screen):
     high_score = 0
 
-    light_color = (.8, .8, .8, 1)
+    light_color = (.75, .75, .75, 1)
     dark_color = (.1, .1, .1, 1)
 
     def __init__(self, **kwargs):
@@ -538,8 +540,22 @@ class SettingsScreen(Screen):
 
 
 class InfoScreen(Screen):
+    info_count = 3
+    current_info = 1
+
     def __init__(self, **kwargs):
         super(InfoScreen, self).__init__(**kwargs)
+        self.load_info_source()
+
+    def change_info_image(self, direction):
+        self.current_info += direction
+        if 0 < self.current_info <= self.info_count:
+            self.load_info_source()
+        else:
+            self.current_info -= direction
+
+    def load_info_source(self):
+        self.info.source = "img/game_info/" + str(self.current_info) + ".png"
 
 
 sm = ScreenManager()

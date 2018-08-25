@@ -233,11 +233,25 @@
             id: back
 
 <InfoScreen>:
+    info: info
     FloatLayout:
         Image:
+            id: info
             size_hint: 1, 1
             pos_hint: {'center_x': .5, 'center_y': .5}
-            source: "img/info_how_to_play.png"
+
+        SquareButton:
+            pos_hint: {'right': 1}
+            source: "img/forward.png"
+            size_hint_x: .1
+
+            on_release: root.change_info_image(1)
+
+        SquareButton:
+            source: "img/back.png"
+            size_hint_x: .1
+
+            on_release: root.change_info_image(-1)
 
         BackButton:
             id: back
