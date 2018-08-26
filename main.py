@@ -14,7 +14,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 Builder.load_file('graphic.kv')
 s1, s2, s3, s4 = (400, 700), (200, 350), (100, 170), (600, 900)
 
-Window.size = s1
+Window.size = s2
 
 
 class NullBlock(ButtonBehavior, Image):
@@ -492,8 +492,8 @@ class OptionButton(Button):
         super(OptionButton, self).__init__(**kwargs)
         self.option = option
 
+        self.font_size = self.size_hint_x * 40
         self.text = str(option)
-        self.font_size = self.height * 0.2
         self.background_color = (.3, .5, 1, .8)
 
 

@@ -158,41 +158,37 @@
             size_hint_y: 1
             pos_hint: {"top": 1}
 
-            BoxLayout:
-                orientation: 'vertical'
+            Label:
+                text: "Board size:"
+                font_size: self.height * 0.3
 
-                Label:
-                    text: "Board size:"
-                    font_size: self.height * 0.3
+            GridLayout:
+                id: board_size_grid
+                size_hint_x: .85
+                pos_hint: {"center_x": .5}
+                spacing: 5
+                row_default_height: self.width/len(root.board_size_options)
+                row_force_default: True
+                cols: len(root.board_size_options)
 
-                GridLayout:
-                    id: board_size_grid
-                    size_hint_x: .85
-                    pos_hint: {"center_x": .5}
-                    spacing: 5
-                    row_default_height: self.width/len(root.board_size_options)
-                    row_force_default: True
-                    cols: len(root.board_size_options)
-            BoxLayout:
-                orientation: 'vertical'
 
-                Label:
-                    text: "Colors:"
-                    font_size: self.height * 0.3
+            Label:
+                text: "Colors:"
+                font_size: self.height * 0.3
 
-                GridLayout:
-                    id: colors_count_grid
-                    size_hint_x: .85
-                    pos_hint: {"center_x": .5}
-                    spacing: 5
-                    row_default_height: self.width/len(root.colors_count_options)
-                    row_force_default: True
-                    cols: len(root.colors_count_options)
+            GridLayout:
+                id: colors_count_grid
+                size_hint_x: .85
+                pos_hint: {"center_x": .5}
+                spacing: 5
+                row_default_height: self.width/len(root.colors_count_options)
+                row_force_default: True
+                cols: len(root.colors_count_options)
 
             Label:
                 text: "Change of game settings may cause lags \n score will not be saved!"
                 halign: 'center'
-                font_size: self.height * 0.15
+                font_size: self.height * 0.2
 
 
             Label:
@@ -206,12 +202,12 @@
 
                 Image:
                     source: "img/facebook.png"
-                    size_hint_y: .5
+                    size_hint_y: .7
                     pos_hint: {"center_x": .5, "center_y": .5}
 
                 Label:
                     text: "/Karol.Borecki.op"
-                    font_size: self.height * 0.15
+                    font_size: self.height * 0.25
 
 
             BoxLayout:
@@ -221,12 +217,12 @@
 
                 Image:
                     source: "img/github.png"
-                    size_hint_y: .5
+                    size_hint_y: .7
                     pos_hint: {"center_x": .5, "center_y": .5}
 
                 Label:
                     text: "/KarolBorecki"
-                    font_size: self.height * 0.15
+                    font_size: self.height * 0.25
 
 
         BackButton:
