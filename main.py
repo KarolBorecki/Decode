@@ -183,7 +183,8 @@ class Block(NullBlock):
 
     def move(self, direction):
         swap_block = self.get_block_by_direction(direction)
-        self.swap_colors(swap_block)
+        if swap_block is not None:
+            self.swap_colors(swap_block)
         self.parent.parent.parent.last_touched_block = None
 
     def swap_colors(self, swap_block, look=True):
