@@ -133,7 +133,7 @@
             size_hint_x: .95
             size_hint_y: None
             height: self.width
-            spacing: self.height/250
+            spacing: self.height/(root.board_size*32)
             cols: root.board_size
 
         SquareButton:
@@ -193,7 +193,7 @@
 
 
             Label:
-                text: "Find me on:"
+                text: "Check the code:"
                 font_size: self.height * 0.3
 
 
