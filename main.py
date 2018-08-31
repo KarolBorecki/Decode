@@ -14,7 +14,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 Builder.load_file('graphic.kv')
 s1, s2, s3, s4 = (400, 700), (200, 350), (100, 170), (600, 900)
 
-Window.size = s2
+Window.size = s1
 
 
 class NullBlock(ButtonBehavior, Image):
@@ -188,12 +188,13 @@ class Block(NullBlock):
         self.parent.parent.parent.last_touched_block = None
 
     def swap_colors(self, swap_block, look=True):
-        swap_block_color = swap_block.c
-        swap_block.set_color(self.c)
-        self.set_color(swap_block_color)
+        if swap_block.c != self.c:
+            swap_block_color = swap_block.c
+            swap_block.set_color(self.c)
+            self.set_color(swap_block_color)
 
-        if look:
-            self.check_line_after_swap(swap_block)
+            if look:
+                self.check_line_after_swap(swap_block)
 
     def check_line_after_swap(self, swap_block):
         swap_block_look_result = swap_block.look_for_line()
