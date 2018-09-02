@@ -387,11 +387,12 @@ class PlayScreen(Screen):
         self.remove_widget(self.bomb_active_screen)
 
     def add_score(self, amount=None):
-        if amount is not None:
-            self.score += amount
-        else:
-            self.score += self.block_destroy_points
-        self.score_board.text = str(self.score)
+        if self.game_active:
+            if amount is not None:
+                self.score += amount
+            else:
+                self.score += self.block_destroy_points
+            self.score_board.text = str(self.score)
 
     def add_bomb(self, amount=1):
         self.bombs_count += amount
