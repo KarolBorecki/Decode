@@ -180,6 +180,7 @@ class Block(NullBlock):
         parent.add_score()
         if self.c == "black":
             parent.add_score(parent.black_bonus)
+            parent.black_chance += 7
 
     def move(self, direction):
         swap_block = self.get_block_by_direction(direction)
@@ -211,12 +212,13 @@ class Block(NullBlock):
         if parent.actual_chance_for_black < parent.black_chance:
             available_colors = [x for x in parent.colors if x != self.c]
             c = random.choice(available_colors)
-            parent.actual_chance_for_black += 1
             self.set_color(c)
+            parent.actual_chance_for_black += 1
+            parent.black_chance -= 0.5
         else:
             self.set_color("black")
             parent.actual_chance_for_black = 0
-            parent.black_chance -= 1
+            parent.black_chance -= 5
 
     def check_block_nearby(self):
         parent = self.parent.parent.parent
@@ -342,6 +344,7 @@ class PlayScreen(Screen):
     board_size = 8
     color_count = 6
     black_chance = 30
+    black_max_chance = 5
     touch_accuracy = 20
     block_destroy_points = 10
     block_destroy_bonus = 5
@@ -427,9 +430,11 @@ class PlayScreen(Screen):
     def game_over(self):
         if self.lose_info not in self.children:
             self.add_widget(self.lose_info)
-        menu = self.manager.get_screen('menu')
         self.game_active = False
+        self.check_for_high_score()
 
+    def check_for_high_score(self):
+        menu = self.manager.get_screen('menu')
         settings_screen = self.manager.get_screen("settings")
         if settings_screen.board_size == settings_screen.default_board_size \
                 and settings_screen.color_count == settings_screen.default_color_count:
@@ -442,6 +447,7 @@ class PlayScreen(Screen):
         self.score_board.text = str(self.score)
         self.bombs_count = 0
         self.bomb_label.text = str(self.bombs_count)
+        self.actual_chance_for_black = 0
         self.bomb_unactive()
         self.game_active = True
         self.last_touched_block = None
@@ -528,6 +534,15 @@ class SettingsScreen(Screen):
             if size == self.color_count:
                 btn.disabled = True
                 self.color_count_btn = btn
+
+    # def load_buttons_to_grid(self, buttons_options, grid, binding_function, actuall_option):
+    #     for option in buttons_options:
+    #         btn = OptionButton(option)
+    #         grid.add_widget(btn)
+    #         btn.bind(on_press=binding_function)
+    #         if option == actuall_option:
+    #             btn.disabled = True
+    #             self.color_count_btn = btn
 
     def change_board(self, instance):
         play_screen = self.manager.get_screen('play')
