@@ -343,7 +343,6 @@ class PlayScreen(Screen):
     board_size = 8
     color_count = 6
     black_chance = 30
-    black_max_chance = 5
     touch_accuracy = 20
     block_destroy_points = 10
     block_destroy_bonus = 5
