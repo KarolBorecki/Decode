@@ -282,9 +282,6 @@ class Block(NullBlock):
         elif direction == "right" and self.index_x < parent.board_size - 1:
             return self.block_right
 
-    def print_index(self):
-        print("y: " + str(self.index_y) + " x: " + str(self.index_x) + " color: " + self.c)
-
     def load_source(self):
         self.source = "img/blocks/" + str(self.c) + "_block.png"
 
@@ -490,12 +487,6 @@ class PlayScreen(Screen):
 
         super(PlayScreen, self).on_touch_up(touch)
 
-    def print_board(self):
-        for y in self.blocks:
-            for block in y:
-                block.print_index()
-            print("\n")
-
 
 class OptionButton(Button):
     def __init__(self, option, **kwargs):
@@ -537,15 +528,6 @@ class SettingsScreen(Screen):
             if size == self.color_count:
                 btn.disabled = True
                 self.color_count_btn = btn
-
-    # def load_buttons_to_grid(self, buttons_options, grid, binding_function, actuall_option):
-    #     for option in buttons_options:
-    #         btn = OptionButton(option)
-    #         grid.add_widget(btn)
-    #         btn.bind(on_press=binding_function)
-    #         if option == actuall_option:
-    #             btn.disabled = True
-    #             self.color_count_btn = btn
 
     def change_board(self, instance):
         play_screen = self.manager.get_screen('play')
