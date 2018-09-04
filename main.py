@@ -178,7 +178,6 @@ class Block(NullBlock):
         if self.c == "black":
             parent.add_score(parent.black_bonus)
             parent.add_black_chance(-15)
-            print "BLACK"
 
         self.set_color("white")
         Clock.schedule_once(self.fall, 0.2)
@@ -376,7 +375,6 @@ class PlayScreen(Screen):
                 self.bomb_unactive()
 
     def bomb_active(self):
-        print str(self.actual_chance_for_black)
         self.last_touched_block = None
         self.is_bomb_drag = True
         self.bomb.size_hint_x = .25
