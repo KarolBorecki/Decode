@@ -175,12 +175,14 @@ class Block(NullBlock):
 
     def set_to_destroyed(self, dt):
         parent = self.parent.parent.parent
+        if self.c == "black":
+            parent.add_score(parent.black_bonus)
+            parent.add_black_chance(-15)
+            print "BLACK"
+
         self.set_color("white")
         Clock.schedule_once(self.fall, 0.2)
         parent.add_score()
-        if self.c == "black":
-            parent.add_score(parent.black_bonus)
-            parent.black_chance += 7
 
     def move(self, direction):
         swap_block = self.get_block_by_direction(direction)
@@ -213,12 +215,10 @@ class Block(NullBlock):
             available_colors = [x for x in parent.colors if x != self.c]
             c = random.choice(available_colors)
             self.set_color(c)
-            parent.actual_chance_for_black += 1
-            parent.black_chance -= 0.5
+            parent.add_black_chance(1)
         else:
             self.set_color("black")
-            parent.actual_chance_for_black = 0
-            parent.black_chance -= 5
+            parent.add_black_chance(-15)
 
     def check_block_nearby(self):
         parent = self.parent.parent.parent
@@ -376,6 +376,7 @@ class PlayScreen(Screen):
                 self.bomb_unactive()
 
     def bomb_active(self):
+        print str(self.actual_chance_for_black)
         self.last_touched_block = None
         self.is_bomb_drag = True
         self.bomb.size_hint_x = .25
@@ -398,6 +399,9 @@ class PlayScreen(Screen):
         self.bombs_count += amount
         self.bomb_label.text = str(self.bombs_count)
         self.add_score(self.bomb_bonus)
+
+    def add_black_chance(self, amount):
+        self.actual_chance_for_black += amount
 
     def block_pressed(self, block):
         self.last_touched_block = block
@@ -449,6 +453,7 @@ class PlayScreen(Screen):
         self.bombs_count = 0
         self.bomb_label.text = str(self.bombs_count)
         self.actual_chance_for_black = 0
+        self.black_chance = 30
         self.bomb_unactive()
         self.game_active = True
         self.last_touched_block = None
