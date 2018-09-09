@@ -12,9 +12,6 @@ from kivy.uix.image import Image
 from kivy.uix.screenmanager import ScreenManager, Screen
 
 Builder.load_file('graphic.kv')
-s1, s2, s3, s4 = (400, 700), (200, 350), (100, 170), (600, 900)
-
-Window.size = s1
 
 
 class NullBlock(ButtonBehavior, Image):
@@ -177,7 +174,7 @@ class Block(NullBlock):
         parent = self.parent.parent.parent
         if self.c == "black":
             parent.add_score(parent.black_bonus)
-            parent.add_black_chance(-15)
+            parent.add_black_chance(-10)
 
         self.set_color("white")
         Clock.schedule_once(self.fall, 0.2)
@@ -215,9 +212,10 @@ class Block(NullBlock):
             c = random.choice(available_colors)
             self.set_color(c)
             parent.add_black_chance(1)
+            parent.black_chance -= 0.05
         else:
             self.set_color("black")
-            parent.add_black_chance(-15)
+            parent.add_black_chance(-12)
 
     def check_block_nearby(self):
         parent = self.parent.parent.parent
