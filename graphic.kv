@@ -217,6 +217,10 @@
 
 <InfoScreen>:
     info: info
+
+    rightb: rightb
+    leftb: leftb
+
     FloatLayout:
         Image:
             id: info
@@ -224,12 +228,14 @@
             pos_hint: {'center_x': .5, 'center_y': .5}
 
         SquareButton:
+            id: rightb
             pos_hint: {'right': 1}
             source: "img/menu_icons/forward.png"
 
             on_release: root.change_info_image(1)
 
         SquareButton:
+            id: leftb
             source: "img/menu_icons/back.png"
 
             on_release: root.change_info_image(-1)

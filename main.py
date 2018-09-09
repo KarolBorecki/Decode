@@ -558,7 +558,7 @@ class InfoScreen(Screen):
 
     def __init__(self, **kwargs):
         super(InfoScreen, self).__init__(**kwargs)
-        self.load_info_source()
+        self.change_info_image(0)
 
     def change_info_image(self, direction):
         self.current_info += direction
@@ -566,6 +566,16 @@ class InfoScreen(Screen):
             self.load_info_source()
         else:
             self.current_info -= direction
+
+        if self.current_info == 3:
+            self.rightb.size_hint_x = 0
+        else:
+            self.rightb.size_hint_x = .12
+
+        if self.current_info == 1:
+            self.leftb.size_hint_x = 0
+        else:
+            self.leftb.size_hint_x = .12
 
     def load_info_source(self):
         self.info.source = "img/game_info/" + str(self.current_info) + ".png"
