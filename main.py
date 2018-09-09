@@ -215,7 +215,7 @@ class Block(NullBlock):
             parent.black_chance -= 0.05
         else:
             self.set_color("black")
-            parent.add_black_chance(-12)
+            parent.add_black_chance(-7)
 
     def check_block_nearby(self):
         parent = self.parent.parent.parent
