@@ -1,3 +1,4 @@
+import os
 import random
 
 from kivy.animation import Animation
@@ -325,8 +326,13 @@ class MenuScreen(Screen):
             Window.clearcolor = self.dark_color
 
     def set_score(self, score):
-        self.high_score = score
+        self.high_score = int(score)
         self.high_score_label.text = str(score)
+
+        app = App.get_running_app()
+        save_file = open(app.user_data_dir + "/save.txt", "w")
+        save_file.write(str(self.high_score) + "\n")
+        save_file.close()
 
 
 class PlayScreen(Screen):
@@ -590,16 +596,13 @@ sm.add_widget(InfoScreen(name='info'))
 
 class Decode(App):
     def build(self):
-        save_file = open("save.txt", "r")
-        sm.get_screen('menu').set_score(int(save_file.readlines()[0]))
-        save_file.close()
-
+        data = 0
+        if os.path.exists(self.user_data_dir + "/save.txt"):
+            save_file = open(self.user_data_dir + "/save.txt", "r")
+            data = save_file.readlines()[0].strip()
+            save_file.close()
+        sm.get_screen('menu').set_score(int(data))
         return sm
-
-    def on_stop(self):
-        save_file = open("save.txt", "w")
-        save_file.write(str(sm.get_screen('menu').high_score))
-        save_file.close()
 
 
 if __name__ == '__main__':
