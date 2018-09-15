@@ -14,7 +14,7 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 
 Builder.load_file('graphic.kv')
 
-Window.size = (1125/4, 2436/4)
+Window.size = (400, 700)
 
 
 class NullBlock(ButtonBehavior, Image):
@@ -172,7 +172,7 @@ class Block(NullBlock):
         self.check_is_destroyed()
 
     def destroy(self):
-        Clock.schedule_once(self.set_to_destroyed, 0.2)
+        Clock.schedule_once(self.set_to_destroyed, 0.1)
 
     def set_to_destroyed(self, dt):
         parent = self.parent.parent.parent
@@ -181,7 +181,7 @@ class Block(NullBlock):
             parent.add_black_chance(-10)
 
         self.set_color("white")
-        Clock.schedule_once(self.fall, 0.2)
+        Clock.schedule_once(self.fall, 0.15)
         parent.add_score()
 
     def move(self, direction):
