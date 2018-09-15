@@ -168,7 +168,7 @@ class Block(NullBlock):
         if self.index_y > 0:
             if self.c == "white":
                 self.swap_colors(self.block_up, False)
-                Clock.schedule_once(self.block_up.fall, 0.0)
+                Clock.schedule_once(self.block_up.fall, 0.03)
         self.check_is_destroyed()
 
     def destroy(self):
