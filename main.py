@@ -1,6 +1,6 @@
 import os
 import random
-# 100 commits motherfuckers!
+
 from kivy.animation import Animation
 from kivy.app import App
 from kivy.clock import Clock
