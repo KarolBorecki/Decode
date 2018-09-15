@@ -301,7 +301,7 @@ class GameOverScreen(FloatLayout):
 class BombActiveScreen(FloatLayout):
     def __init__(self, **kwargs):
         super(BombActiveScreen, self).__init__(**kwargs)
-        self.anim = Animation(opacity=0, duration=.7) + Animation(opacity=1, duration=.7)
+        self.anim = Animation(opacity=0.7, duration=.7) + Animation(opacity=1, duration=.7)
         self.anim.repeat = True
         self.anim.start(self.background)
 
