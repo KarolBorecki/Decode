@@ -14,6 +14,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 
 Builder.load_file('graphic.kv')
 
+Window.size = (1125/4, 2436/4)
+
 
 class NullBlock(ButtonBehavior, Image):
     index_x, index_y = 0, 0
@@ -32,6 +34,7 @@ class NullBlock(ButtonBehavior, Image):
 class Block(NullBlock):
     block_up, block_down, block_right, block_left, block_up2, block_down2, block_right2, block_left2 \
         = NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock()
+    opacity = 1.4
 
     def __init__(self, c, x, y, **kwargs):
         super(Block, self).__init__(**kwargs)
