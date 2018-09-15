@@ -34,7 +34,7 @@ class NullBlock(ButtonBehavior, Image):
 class Block(NullBlock):
     block_up, block_down, block_right, block_left, block_up2, block_down2, block_right2, block_left2 \
         = NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock(), NullBlock()
-    opacity = 1.4
+    opacity = 1.2
 
     def __init__(self, c, x, y, **kwargs):
         super(Block, self).__init__(**kwargs)
@@ -310,7 +310,7 @@ class MenuScreen(Screen):
     high_score = 0
 
     light_color = (.75, .75, .75, 1)
-    dark_color = (.1, .1, .1, 1)
+    dark_color = (.13, .13, .13, 1)
 
     def __init__(self, **kwargs):
         super(MenuScreen, self).__init__(**kwargs)
