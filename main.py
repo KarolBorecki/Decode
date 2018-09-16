@@ -321,12 +321,17 @@ class MenuScreen(Screen):
     def change_theme(self):
         self.color = not self.color
         self.set_color(self.color)
+        self.play_btn.background_color = self.get_random_rgba()
 
     def set_color(self, color):
         if color:
             Window.clearcolor = self.light_color
         else:
             Window.clearcolor = self.dark_color
+
+    @staticmethod
+    def get_random_rgba():
+        return random.uniform(0.1, 0.9), random.uniform(0.1, 0.9), random.uniform(0.1, 0.9), .9
 
     def set_score(self, score):
         self.high_score = int(score)
