@@ -53,7 +53,6 @@
 
 <MenuScreen>:
     high_score_label: high_score_label
-    play_btn: play_btn
 
     FloatLayout:
         BoxLayout:
@@ -79,12 +78,11 @@
             markup: True
 
         Button:
-            id: play_btn
             text: 'Play'
             size_hint: (.55, .18)
             pos_hint: {'center_x': .5, 'center_y': .25}
 
-            background_color: root.get_random_rgba()
+            background_color: .3, .5, 1, .9
             font_size: root.height/13
 
             on_release: root.manager.current = 'play'

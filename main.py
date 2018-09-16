@@ -321,7 +321,6 @@ class MenuScreen(Screen):
     def change_theme(self):
         self.color = not self.color
         self.set_color(self.color)
-        self.play_btn.background_color = self.get_random_rgba()
 
     def set_color(self, color):
         if color:
