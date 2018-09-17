@@ -14,7 +14,8 @@ from kivy.uix.screenmanager import ScreenManager, Screen
 
 Builder.load_file('graphic.kv')
 
-Window.size = (400, 700)
+
+# PROJECT CLOSED I WANT TO THANK TO MYSELF.
 
 
 class NullBlock(ButtonBehavior, Image):
