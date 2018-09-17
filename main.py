@@ -178,7 +178,7 @@ class Block(NullBlock):
         parent = self.parent.parent.parent
         if self.c == "black":
             parent.add_score(parent.black_bonus)
-            parent.add_black_chance(-10)
+            parent.add_black_chance(-9)
 
         self.set_color("white")
         Clock.schedule_once(self.fall, 0.15)
@@ -215,8 +215,8 @@ class Block(NullBlock):
             available_colors = [x for x in parent.colors if x != self.c]
             c = random.choice(available_colors)
             self.set_color(c)
-            parent.add_black_chance(1)
-            parent.black_chance -= 0.05
+            parent.add_black_chance(0.9)
+            parent.black_chance -= 0.1
         else:
             self.set_color("black")
             parent.add_black_chance(-7)
