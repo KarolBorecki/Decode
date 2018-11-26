@@ -458,14 +458,16 @@ class PlayScreen(Screen):
                 dif_y = self.actually_y - self.last_y
 
                 direction = ""
-                if dif_y > self.touch_accuracy:
-                    direction = "up"
-                elif dif_y < -self.touch_accuracy:
-                    direction = "down"
-                elif dif_x > self.touch_accuracy:
-                    direction = "right"
-                elif dif_x < -self.touch_accuracy:
-                    direction = "left"
+                if abs(dif_y) > abs(dif_x):
+                    if dif_y > self.touch_accuracy:
+                        direction = "up"
+                    elif dif_y < -self.touch_accuracy:
+                        direction = "down"
+                elif abs(dif_x) > abs(dif_y):
+                    if dif_x > self.touch_accuracy:
+                        direction = "right"
+                    elif dif_x < -self.touch_accuracy:
+                        direction = "left"
                 else:
                     self.last_touched_block.click_destroy()
                     return
