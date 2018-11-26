@@ -71,54 +71,29 @@ class Block(NullBlock):
         self.block_right.destroy()
         self.block_down.destroy()
 
-    def check_line(self, side_a1, side_a2, side_b1, side_b2):
-        blocks_to_destroy = []
+    def check_for_bonus_row(self, side_a1, side_a2, side_b1, side_b2):
+        bombs_to_add = 0
 
-        if self.c == side_a1.c and self.c == side_b1.c:
-            if self.c == side_a2.c:
-                blocks_to_destroy.append(side_a2)
+        if self.c == side_a1.c and self.c == side_b1.c and self.c == side_b2.c:
+            bombs_to_add += 1
 
-            blocks_to_destroy.append(side_a1)
-            blocks_to_destroy.append(self)
-            blocks_to_destroy.append(side_b1)
+        if self.c == side_a1.c and self.c == side_b1.c and self.c == side_a2.c:
+            bombs_to_add += 1
 
-            if self.c == side_b2.c:
-                blocks_to_destroy.append(side_b2)
-
-        else:
-            if self.c == side_a1.c and self.c == side_a2.c:
-                blocks_to_destroy.append(side_a2)
-                blocks_to_destroy.append(side_a1)
-                blocks_to_destroy.append(self)
-
-            if self.c == side_b1.c and self.c == side_b2.c:
-                blocks_to_destroy.append(self)
-                blocks_to_destroy.append(side_b1)
-                blocks_to_destroy.append(side_b2)
-
-        return blocks_to_destroy
+        return bombs_to_add
 
     def look_for_line(self, destroy=True, look_for_black=True):
         parent = self.parent.parent.parent
 
-        horizontal_blocks = self.check_line(self.block_left, self.block_left2, self.block_right, self.block_right2)
-        vertical_blocks = self.check_line(self.block_up, self.block_up2, self.block_down, self.block_down2)
-        blocks_to_destroy = horizontal_blocks + vertical_blocks
+        horizontal_blocks = self.check_for_bonus_row(self.block_left, self.block_left2, self.block_right, self.block_right2)
+        vertical_blocks = self.check_for_bonus_row(self.block_up, self.block_up2, self.block_down, self.block_down2)
 
-        if len(blocks_to_destroy) > 0:
-            if destroy:
-                for block in blocks_to_destroy:
-                    if look_for_black:
-                        block.look_for_black()
-                    block.destroy()
-
-            if len(horizontal_blocks) > 3 or len(vertical_blocks) > 3:
-                parent.add_bomb()
-
-            if len(horizontal_blocks) > 4 or len(vertical_blocks) > 4:
-                parent.add_bomb()
+        if self.click_destroy():
+            parent.add_bomb(horizontal_blocks)
+            parent.add_bomb(vertical_blocks)
 
             return True
+
         return False
 
     def look_for_group(self):
@@ -160,10 +135,12 @@ class Block(NullBlock):
             if len(to_destroy) > 4:
                 parent = self.parent.parent.parent
                 parent.add_score(parent.block_destroy_bonus * len(to_destroy))
+            return True
+        return False
 
     def look_for_black(self):
         if self.block_left.c == "black" or self.block_right.c == "black" or self.block_up.c == "black" or self.block_down.c == "black":
-            self.parent.parent.parent.game_over()
+            Clock.schedule_once(self.parent.parent.parent.game_over, .5)
 
     def fall(self, dt):
         if self.index_y > 0:
@@ -438,7 +415,7 @@ class PlayScreen(Screen):
             for x in y:
                 x.check_block_nearby()
 
-    def game_over(self):
+    def game_over(self, dt):
         if self.lose_info not in self.children:
             self.add_widget(self.lose_info)
         self.game_active = False
